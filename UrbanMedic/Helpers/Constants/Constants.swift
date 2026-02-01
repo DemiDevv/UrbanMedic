@@ -18,8 +18,14 @@ enum Constants {
 
     enum Auth {
         static let signIn = "Войти"
-        static let seedPlaceholder = "Укажите Сид"
+        static let seedTitle = "Укажите Seed"
+        static let seedPlaceholder = "Введите Seed"
         static let seedLabel = "Seed"
         static let confirmButton = "Подтвердить"
+    }
+
+    enum Images {
+        static let logo = "urban_medic_logo"
+        static let doctorIllustration = "doctor_image"
     }
 }

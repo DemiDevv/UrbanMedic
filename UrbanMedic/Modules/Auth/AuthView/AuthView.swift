@@ -14,95 +14,113 @@ struct AuthView: View {
     var body: some View {
         VStack(spacing: 0) {
 
-            Spacer().frame(height: 24)
-
             // Logo
-            Image("urban_medic_logo")
+            Image(Constants.Images.logo)
                 .resizable()
                 .scaledToFit()
-                .frame(height: 32)
+                .frame(height: Layout.logoHeight)
 
-            Spacer().frame(height: 32)
+            Spacer().frame(height: Layout.logoBottomSpacing)
 
             // Illustration
-            Image("doctor_image")
+            Image(Constants.Images.doctorIllustration)
                 .resizable()
                 .scaledToFit()
-                .frame(height: 220)
 
-            Spacer().frame(height: 32)
+            Spacer().frame(height: Layout.illustrationBottomSpacing)
 
             // Title
-            Text("Укажите Seed")
-                .font(.system(size: 24, weight: .semibold))
+            Text(Constants.Auth.seedTitle)
+                .font(.system(size: Layout.titleFontSize, weight: .regular))
 
-            Spacer().frame(height: 24)
+            Spacer().frame(height: Layout.titleBottomSpacing)
 
             // Input
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Seed")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
+            VStack(alignment: .leading, spacing: 0) {
+                Text(Constants.Auth.seedLabel)
+                    .font(.system(size: Layout.labelFontSize))
+                    .foregroundColor(.labelSecondary)
 
-                TextField("Введите Seed", text: $viewModel.seed)
-                    .font(.system(size: 16))
-                    .padding(.vertical, 8)
+                TextField(Constants.Auth.seedPlaceholder, text: $viewModel.seed)
+                    .font(.system(size: Layout.textFieldFontSize))
+                    .foregroundColor(.black)
+                    .padding(.vertical, Layout.textFieldVerticalPadding)
                     .autocapitalization(.none)
                     .autocorrectionDisabled()
+                    .placeholder(when: viewModel.seed.isEmpty) {
+                        Text(Constants.Auth.seedPlaceholder)
+                            .foregroundColor(.placeholderText)
+                            .font(.system(size: Layout.textFieldFontSize))
+                    }
                     .overlay(
                         Rectangle()
-                            .frame(height: 1)
-                            .foregroundColor(Color.gray.opacity(0.3)),
+                            .frame(height: Layout.separatorHeight)
+                            .foregroundColor(.separatorTextField),
                         alignment: .bottom
                     )
             }
-            .padding(.horizontal, 24)
+            .padding(.horizontal, Layout.horizontalPadding)
 
-            Spacer().frame(height: 32)
+            Spacer().frame(height: Layout.inputBottomSpacing)
 
             // Language switch
-            HStack(spacing: 12) {
-                languageButton(title: "Русский", lang: .ru)
-                languageButton(title: "English", lang: .en)
-            }
-            .padding(.horizontal, 24)
+            LanguageSegmentedControl(selectedLanguage: $viewModel.selectedLanguage, style: .full)
+                .padding(.horizontal, Layout.buttonHorizontalPadding)
 
-            Spacer()
+            Spacer().frame(height: Layout.languageSwitchBottomSpacing)
+
+            // Separator line
+            Rectangle()
+                .fill(Color.separatorPrimary)
+                .frame(height: Layout.separatorHeight)
+
+            Spacer().frame(height: Layout.separatorBottomSpacing)
 
             // Confirm button
             PrimaryButton(
-                title: "Подтвердить",
+                title: Constants.Auth.confirmButton,
                 isEnabled: viewModel.isConfirmEnabled
             ) {
                 viewModel.confirmTapped()
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 24)
+            .padding(.horizontal, Layout.buttonHorizontalPadding)
+            .padding(.bottom, Layout.buttonBottomPadding)
         }
     }
+}
 
-    // MARK: - Language Button
+// MARK: - Layout Constants
 
-    private func languageButton(title: String, lang: AuthViewModel.Language) -> some View {
-        Button {
-            viewModel.selectLanguage(lang)
-        } label: {
-            Text(title)
-                .font(.system(size: 15, weight: .medium))
-                .foregroundColor(viewModel.selectedLanguage == lang ? .black : .gray)
-                .frame(maxWidth: .infinity)
-                .frame(height: 44)
-                .background(
-                    viewModel.selectedLanguage == lang
-                    ? Color.white
-                    : Color.clear
-                )
-                .cornerRadius(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.gray.opacity(0.2))
-                )
-        }
+private extension AuthView {
+    enum Layout {
+        // Logo
+        static let logoHeight: CGFloat = 23
+        static let logoBottomSpacing: CGFloat = 32
+
+        // Illustration
+        static let illustrationBottomSpacing: CGFloat = 82
+
+        // Title
+        static let titleFontSize: CGFloat = 28
+        static let titleBottomSpacing: CGFloat = 24
+
+        // Input
+        static let labelFontSize: CGFloat = 14
+        static let textFieldFontSize: CGFloat = 16
+        static let textFieldVerticalPadding: CGFloat = 8
+        static let horizontalPadding: CGFloat = 28
+        static let inputBottomSpacing: CGFloat = 88
+
+        // Language Switch
+        static let languageSwitchBottomSpacing: CGFloat = 14
+
+        // Separator
+        static let separatorHeight: CGFloat = 1
+        static let separatorBottomSpacing: CGFloat = 14
+
+        // Button
+        static let buttonHorizontalPadding: CGFloat = 14
+        static let buttonBottomPadding: CGFloat = 16
     }
 }
 

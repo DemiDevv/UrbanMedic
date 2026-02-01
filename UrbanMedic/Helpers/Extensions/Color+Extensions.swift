@@ -6,3 +6,12 @@
 //
 
 import SwiftUI
+
+extension Color {
+
+    // MARK: - Text Colors
+
+    /// Цвет для placeholder (#000000 60% opacity)
+    static let placeholderText = Color.black.opacity(0.6)
+
+}
