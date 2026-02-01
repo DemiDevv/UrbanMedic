@@ -44,8 +44,7 @@ struct LanguageSegmentedControl: View {
             Text(title)
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(selectedLanguage == language ? .black : Color(UIColor.systemGray))
-                .frame(maxWidth: .infinity)
-                .frame(height: 40)
+                .frame(maxWidth: .infinity, maxHeight: .infinity) // Убрали фиксированную высоту
                 .background(
                     selectedLanguage == language
                     ? Color.white

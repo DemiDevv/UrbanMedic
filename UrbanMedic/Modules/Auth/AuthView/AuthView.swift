@@ -43,7 +43,7 @@ struct AuthView: View {
 
                 TextField(Constants.Auth.seedPlaceholder, text: $viewModel.seed)
                     .font(.system(size: Layout.textFieldFontSize))
-                    .foregroundColor(.black)
+                    .foregroundColor(.placeholderText)
                     .padding(.vertical, Layout.textFieldVerticalPadding)
                     .autocapitalization(.none)
                     .autocorrectionDisabled()
@@ -65,6 +65,7 @@ struct AuthView: View {
 
             // Language switch
             LanguageSegmentedControl(selectedLanguage: $viewModel.selectedLanguage, style: .full)
+                .frame(height: 40)
                 .padding(.horizontal, Layout.buttonHorizontalPadding)
 
             Spacer().frame(height: Layout.languageSwitchBottomSpacing)

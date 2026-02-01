@@ -24,8 +24,17 @@ enum Constants {
         static let confirmButton = "Подтвердить"
     }
 
+    enum Contacts {
+        static let addContactButton = "Добавить контакт"
+        static let numberColumn = "№"
+        static let lastNameColumn = "Фамилия"
+        static let emailColumn = "Почта"
+    }
+
     enum Images {
         static let logo = "urban_medic_logo"
         static let doctorIllustration = "doctor_image"
+        static let editIcon = "icon_edit"
+        static let logoutIcon = "logout_Icon"
     }
 }
