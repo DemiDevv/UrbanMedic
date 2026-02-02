@@ -53,30 +53,15 @@ final class AuthViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
 
-        // 1. Запрашиваем разрешение на уведомления
-        NotificationService.shared.requestPermission { [weak self] granted in
+        // 1. Сначала запрашиваем геолокацию
+        requestLocationAndSaveSession()
+
+        // Таймаут на случай если геолокация зависнет
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
             guard let self = self else { return }
-
-            // 2. Вызываем вибрацию
-            VibrationService.shared.triggerVibration()
-
-            // 3. Отправляем уведомление (если разрешение дано)
-            if granted {
-                NotificationService.shared.sendLocalNotification(
-                    title: "Вы успешно авторизовались"
-                )
-            }
-
-            // 4. Запрашиваем геолокацию с таймаутом
-            self.requestLocationAndSaveSession()
-
-            // Таймаут на случай если геолокация зависнет
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
-                guard let self = self else { return }
-                if self.isLoading {
-                    print("Location request timeout")
-                    self.saveSession(cityName: nil)
-                }
+            if self.isLoading {
+                print("Location request timeout")
+                self.completeAuthFlow(cityName: nil)
             }
         }
     }
@@ -102,15 +87,40 @@ final class AuthViewModel: ObservableObject {
                     break
                 case .failure(let error):
                     print("Location error: \(error.localizedDescription)")
-                    // Даже если геолокация не удалась, сохраняем сессию без города
-                    self.saveSession(cityName: nil)
+                    // Даже если геолокация не удалась, продолжаем авторизацию
+                    self.completeAuthFlow(cityName: nil)
                 }
             } receiveValue: { [weak self] cityName in
                 guard let self = self else { return }
-                // Сохраняем сессию с названием города
-                self.saveSession(cityName: cityName)
+                // Продолжаем авторизацию с названием города
+                self.completeAuthFlow(cityName: cityName)
             }
             .store(in: &cancellables)
+    }
+
+    // MARK: - Complete Auth Flow
+
+    private func completeAuthFlow(cityName: String?) {
+        // Предотвращаем повторный вызов (например, от таймаута)
+        guard isLoading else { return }
+
+        // 2. Запрашиваем разрешение на уведомления
+        NotificationService.shared.requestPermission { [weak self] granted in
+            guard let self = self else { return }
+
+            // 3. Вызываем вибрацию
+            VibrationService.shared.triggerVibration()
+
+            // 4. Отправляем уведомление (если разрешение дано)
+            if granted {
+                NotificationService.shared.sendLocalNotification(
+                    title: "Вы успешно авторизовались"
+                )
+            }
+
+            // 5. Сохраняем сессию
+            self.saveSession(cityName: cityName)
+        }
     }
 
     // MARK: - Save Session

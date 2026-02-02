@@ -8,11 +8,15 @@
 import Foundation
 import UserNotifications
 
-final class NotificationService {
+final class NotificationService: NSObject {
 
     static let shared = NotificationService()
 
-    private init() {}
+    private override init() {
+        super.init()
+        // Set delegate to show notifications in foreground
+        UNUserNotificationCenter.current().delegate = self
+    }
 
     // MARK: - Request Permission
 
@@ -48,5 +52,19 @@ final class NotificationService {
                 print("Error sending notification: \(error)")
             }
         }
+    }
+}
+
+// MARK: - UNUserNotificationCenterDelegate
+
+extension NotificationService: UNUserNotificationCenterDelegate {
+
+    // Show notification even when app is in foreground
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound])
     }
 }
