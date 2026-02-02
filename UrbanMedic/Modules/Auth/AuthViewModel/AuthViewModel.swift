@@ -7,6 +7,13 @@
 
 import Foundation
 import Combine
+import CoreLocation
+
+// MARK: - Timeout Error
+
+struct TimeoutError: Error, LocalizedError {
+    var errorDescription: String? { "Превышено время ожидания" }
+}
 
 final class AuthViewModel: ObservableObject {
 
@@ -53,73 +60,88 @@ final class AuthViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
 
-        // 1. Сначала запрашиваем геолокацию
-        requestLocationAndSaveSession()
+        Task {
+            await performAuthFlow()
+        }
+    }
 
-        // Таймаут на случай если геолокация зависнет
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
-            guard let self = self else { return }
-            if self.isLoading {
-                print("Location request timeout")
-                self.completeAuthFlow(cityName: nil)
+    // MARK: - Auth Flow
+
+    @MainActor
+    private func performAuthFlow() async {
+        var cityName: String?
+
+        // 1. Запрашиваем геолокацию с таймаутом
+        do {
+            cityName = try await withTimeout(seconds: 10) {
+                try await self.fetchCityName()
+            }
+        } catch {
+            print("Location error: \(error.localizedDescription)")
+            cityName = nil
+        }
+
+        // 2. Запрашиваем разрешение на уведомления
+        let notificationGranted = await requestNotificationPermission()
+
+        // 3. Вызываем вибрацию
+        VibrationService.shared.triggerVibration()
+
+        // 4. Отправляем уведомление (если разрешение дано)
+        if notificationGranted {
+            NotificationService.shared.sendLocalNotification(
+                title: "Вы успешно авторизовались"
+            )
+        }
+
+        // 5. Сохраняем сессию
+        saveSession(cityName: cityName)
+    }
+
+    // MARK: - Fetch City Name
+
+    private func fetchCityName() async throws -> String {
+        let location = try await withCheckedThrowingContinuation { continuation in
+            LocationService.shared.requestLocation()
+                .sink { completion in
+                    if case .failure(let error) = completion {
+                        continuation.resume(throwing: error)
+                    }
+                } receiveValue: { location in
+                    continuation.resume(returning: location)
+                }
+                .store(in: &cancellables)
+        }
+
+        return try await LocationService.shared.getCityName(for: location)
+    }
+
+    // MARK: - Request Notification Permission
+
+    private func requestNotificationPermission() async -> Bool {
+        await withCheckedContinuation { continuation in
+            NotificationService.shared.requestPermission { granted in
+                continuation.resume(returning: granted)
             }
         }
     }
 
-    // MARK: - Location & Save Session
+    // MARK: - Timeout Helper
 
-    private func requestLocationAndSaveSession() {
-        LocationService.shared.requestLocation()
-            .mapError { error -> NetworkError in
-                // Конвертируем Error в NetworkError
-                return .unknown(error)
-            }
-            .flatMap { location -> AnyPublisher<String, NetworkError> in
-                // Получаем название города по координатам
-                return LocationService.shared.getCityName(for: location)
-            }
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] completion in
-                guard let self = self else { return }
-
-                switch completion {
-                case .finished:
-                    break
-                case .failure(let error):
-                    print("Location error: \(error.localizedDescription)")
-                    // Даже если геолокация не удалась, продолжаем авторизацию
-                    self.completeAuthFlow(cityName: nil)
-                }
-            } receiveValue: { [weak self] cityName in
-                guard let self = self else { return }
-                // Продолжаем авторизацию с названием города
-                self.completeAuthFlow(cityName: cityName)
-            }
-            .store(in: &cancellables)
-    }
-
-    // MARK: - Complete Auth Flow
-
-    private func completeAuthFlow(cityName: String?) {
-        // Предотвращаем повторный вызов (например, от таймаута)
-        guard isLoading else { return }
-
-        // 2. Запрашиваем разрешение на уведомления
-        NotificationService.shared.requestPermission { [weak self] granted in
-            guard let self = self else { return }
-
-            // 3. Вызываем вибрацию
-            VibrationService.shared.triggerVibration()
-
-            // 4. Отправляем уведомление (если разрешение дано)
-            if granted {
-                NotificationService.shared.sendLocalNotification(
-                    title: "Вы успешно авторизовались"
-                )
+    private func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
+        try await withThrowingTaskGroup(of: T.self) { group in
+            group.addTask {
+                try await operation()
             }
 
-            // 5. Сохраняем сессию
-            self.saveSession(cityName: cityName)
+            group.addTask {
+                try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                throw TimeoutError()
+            }
+
+            let result = try await group.next()!
+            group.cancelAll()
+            return result
         }
     }
 

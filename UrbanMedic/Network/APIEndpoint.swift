@@ -14,7 +14,7 @@ enum APIEndpoint {
     var url: String {
         switch self {
         case .getUsers(let results, let page, let seed):
-            return "https://randomuser.ifx.ru/api/?results=\(results)&page=\(page)&seed=\(seed)"
+            return "https://randomuser.me/api/?results=\(results)&page=\(page)&seed=\(seed)"
         case .getLocation:
             return "https://suggestions.dadata.ru/suggestions/api/4_1/rs/geolocate/address"
         }

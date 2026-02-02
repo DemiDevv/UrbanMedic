@@ -51,15 +51,12 @@ final class LocationService: NSObject {
         return subject.eraseToAnyPublisher()
     }
 
-    func getCityName(for location: CLLocation) -> AnyPublisher<String, NetworkError> {
-        return NetworkManager.shared.fetchLocation(
+    func getCityName(for location: CLLocation) async throws -> String {
+        let response = try await NetworkManager.shared.fetchLocation(
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude
         )
-        .map { response -> String in
-            return response.suggestions.first?.data.cityName ?? "Неизвестно"
-        }
-        .eraseToAnyPublisher()
+        return response.suggestions.first?.data.cityName ?? "Неизвестно"
     }
 }
 

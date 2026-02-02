@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+@MainActor
 final class ContactsListViewModel: ObservableObject {
 
     @Published var selectedLanguage: AuthViewModel.Language = .ru
@@ -21,14 +22,16 @@ final class ContactsListViewModel: ObservableObject {
     private var currentSeed: String = ""
     private var currentPage: Int = 1
     private var canLoadMore: Bool = true
-    private var cancellables = Set<AnyCancellable>()
+    private var loadingTask: Task<Void, Never>?
 
     // MARK: - Initialization
 
     init() {
         loadSession()
         loadUserCreatedContacts()
-        loadContactsFromAPI()
+        Task {
+            await loadContactsFromAPI()
+        }
     }
 
     // MARK: - Load Session
@@ -51,37 +54,32 @@ final class ContactsListViewModel: ObservableObject {
 
     // MARK: - Load Contacts from API
 
-    func loadContactsFromAPI() {
+    func loadContactsFromAPI() async {
         guard !isLoading, canLoadMore else { return }
 
         isLoading = true
 
-        NetworkManager.shared.fetchUsers(results: 20, page: currentPage, seed: currentSeed)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] completion in
-                guard let self = self else { return }
-                self.isLoading = false
+        do {
+            let response = try await NetworkManager.shared.fetchUsers(
+                results: 20,
+                page: currentPage,
+                seed: currentSeed
+            )
 
-                switch completion {
-                case .finished:
-                    break
-                case .failure(let error):
-                    print("Error loading contacts: \(error.localizedDescription)")
-                    self.canLoadMore = false
-                }
-            } receiveValue: { [weak self] response in
-                guard let self = self else { return }
+            let newContacts = response.results.map { $0.toDomainModel() }
 
-                let newContacts = response.results.map { $0.toDomainModel() }
+            // Добавляем новые контакты после пользовательских
+            let userCreatedContacts = contacts.filter { $0.isUserCreated }
+            let apiContacts = contacts.filter { !$0.isUserCreated }
 
-                // Добавляем новые контакты после пользовательских
-                let userCreatedContacts = self.contacts.filter { $0.isUserCreated }
-                let apiContacts = self.contacts.filter { !$0.isUserCreated }
-
-                self.contacts = userCreatedContacts + apiContacts + newContacts
-                self.currentPage += 1
-            }
-            .store(in: &cancellables)
+            contacts = userCreatedContacts + apiContacts + newContacts
+            currentPage += 1
+            isLoading = false
+        } catch {
+            print("Error loading contacts: \(error.localizedDescription)")
+            canLoadMore = false
+            isLoading = false
+        }
     }
 
     // MARK: - Pagination
@@ -93,7 +91,9 @@ final class ContactsListViewModel: ObservableObject {
             return
         }
 
-        loadContactsFromAPI()
+        Task {
+            await loadContactsFromAPI()
+        }
     }
 
     // MARK: - Logout
@@ -130,19 +130,15 @@ final class ContactsListViewModel: ObservableObject {
         // Обновляем список после добавления/редактирования
         loadUserCreatedContacts()
 
-        // Перезагружаем контакты с API
+        // Сбрасываем API контакты и загружаем заново
         let userCreatedContacts = contacts.filter { $0.isUserCreated }
-        let apiContactsCount = contacts.count - userCreatedContacts.count
+        contacts = userCreatedContacts
 
-        // Загружаем столько же API контактов, сколько было
-        let pagesToLoad = (apiContactsCount / 20) + 1
         currentPage = 1
         canLoadMore = true
 
-        contacts = userCreatedContacts
-
-        for _ in 1...pagesToLoad {
-            loadContactsFromAPI()
+        Task {
+            await loadContactsFromAPI()
         }
     }
 }
