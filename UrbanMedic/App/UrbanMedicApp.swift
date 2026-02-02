@@ -11,7 +11,7 @@ import SwiftUI
 struct UrbanMedicApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }

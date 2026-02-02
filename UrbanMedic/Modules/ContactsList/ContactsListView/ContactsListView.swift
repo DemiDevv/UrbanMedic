@@ -23,6 +23,27 @@ struct ContactsListView: View {
             addContactButton
         }
         .background(Color.white)
+        .sheet(isPresented: $viewModel.shouldNavigateToAddContact) {
+            if let contact = viewModel.contactToEdit {
+                AddEditContactView(mode: .edit(contact))
+                    .onDisappear {
+                        viewModel.refreshContacts()
+                    }
+            } else {
+                AddEditContactView(mode: .add)
+                    .onDisappear {
+                        viewModel.refreshContacts()
+                    }
+            }
+        }
+        .alert("Вы уверены, что хотите выйти?", isPresented: $viewModel.showLogoutAlert) {
+            Button("Отмена", role: .cancel) { }
+            Button("Выйти", role: .destructive) {
+                viewModel.confirmLogout()
+            }
+        } message: {
+            Text("При выходе информация о сохраненных контактах будет удалена")
+        }
     }
 
     // MARK: - Header
@@ -63,18 +84,34 @@ struct ContactsListView: View {
             tableHeaderView
 
             // Table Content
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(Array(viewModel.contacts.enumerated()), id: \.offset) { index, contact in
-                        ContactRowView(
-                            number: index + 1,
-                            contact: contact,
-                            onEdit: contact.isUserCreated ? {
-                                viewModel.editContact(contact)
-                            } : nil
-                        )
+            if viewModel.isLoading && viewModel.contacts.isEmpty {
+                // Loading indicator
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(Array(viewModel.contacts.enumerated()), id: \.element.id) { index, contact in
+                            ContactRowView(
+                                number: index + 1,
+                                contact: contact,
+                                onEdit: contact.isUserCreated ? {
+                                    viewModel.editContact(contact)
+                                } : nil
+                            )
+                            .onAppear {
+                                // Пагинация
+                                viewModel.loadMoreContactsIfNeeded(currentContact: contact)
+                            }
 
-                        Divider()
+                            Divider()
+                        }
+
+                        // Loading more indicator
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .padding()
+                        }
                     }
                 }
             }

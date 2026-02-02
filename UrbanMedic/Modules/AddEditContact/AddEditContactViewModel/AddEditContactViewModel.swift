@@ -17,6 +17,7 @@ final class AddEditContactViewModel: ObservableObject {
 
     private let initialLastName: String
     private let initialEmail: String
+    private var editingContact: ContactModel?
 
     init(mode: AddEditContactView.Mode) {
         self.mode = mode
@@ -26,6 +27,7 @@ final class AddEditContactViewModel: ObservableObject {
             self.email = contact.email
             self.initialLastName = contact.lastName
             self.initialEmail = contact.email
+            self.editingContact = contact
         } else {
             self.initialLastName = ""
             self.initialEmail = ""
@@ -58,10 +60,39 @@ final class AddEditContactViewModel: ObservableObject {
         return trimmed.range(of: pattern, options: .regularExpression) != nil
     }
 
-    // MARK: - Actions
+    // MARK: - Save
 
     func save() {
-        // TODO: Implement saving logic
-        print("Saving contact: \(lastName), \(email)")
+        guard isValid else { return }
+        guard let session = CoreDataManager.shared.getCurrentSession() else {
+            print("No active session")
+            return
+        }
+
+        let seed = session.seed ?? ""
+
+        switch mode {
+        case .add:
+            // Создаем новый контакт
+            let newContact = ContactModel(
+                id: UUID(),
+                lastName: lastName.trimmingCharacters(in: .whitespaces),
+                email: email.trimmingCharacters(in: .whitespaces),
+                isUserCreated: true
+            )
+            CoreDataManager.shared.saveContact(newContact, seed: seed)
+
+        case .edit:
+            // Обновляем существующий контакт
+            guard let contact = editingContact else { return }
+
+            let updatedContact = ContactModel(
+                id: contact.id,
+                lastName: lastName.trimmingCharacters(in: .whitespaces),
+                email: email.trimmingCharacters(in: .whitespaces),
+                isUserCreated: contact.isUserCreated
+            )
+            CoreDataManager.shared.updateContact(updatedContact, seed: seed)
+        }
     }
 }

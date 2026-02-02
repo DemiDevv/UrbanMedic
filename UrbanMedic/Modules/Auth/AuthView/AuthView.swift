@@ -47,6 +47,7 @@ struct AuthView: View {
                     .padding(.vertical, Layout.textFieldVerticalPadding)
                     .autocapitalization(.none)
                     .autocorrectionDisabled()
+                    .disabled(viewModel.isLoading)
                     .placeholder(when: viewModel.seed.isEmpty) {
                         Text(Constants.Auth.seedPlaceholder)
                             .foregroundColor(.placeholderText)
@@ -67,6 +68,7 @@ struct AuthView: View {
             LanguageSegmentedControl(selectedLanguage: $viewModel.selectedLanguage, style: .full)
                 .frame(height: 40)
                 .padding(.horizontal, Layout.buttonHorizontalPadding)
+                .disabled(viewModel.isLoading)
 
             Spacer().frame(height: Layout.languageSwitchBottomSpacing)
 
@@ -79,7 +81,7 @@ struct AuthView: View {
 
             // Confirm button
             PrimaryButton(
-                title: Constants.Auth.confirmButton,
+                title: viewModel.isLoading ? "Загрузка..." : Constants.Auth.confirmButton,
                 isEnabled: viewModel.isConfirmEnabled
             ) {
                 viewModel.confirmTapped()
