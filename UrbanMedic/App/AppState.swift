@@ -1,0 +1,32 @@
+//
+//  AppState.swift
+//  UrbanMedic
+//
+//  Created by Demain Petropavlov on 02.02.2026.
+//
+
+import Foundation
+import Combine
+
+final class AppState: ObservableObject {
+
+    static let shared = AppState()
+
+    @Published var isAuthenticated: Bool = false
+
+    private init() {
+        checkAuthentication()
+    }
+
+    func checkAuthentication() {
+        isAuthenticated = CoreDataManager.shared.getCurrentSession() != nil
+    }
+
+    func login() {
+        isAuthenticated = true
+    }
+
+    func logout() {
+        isAuthenticated = false
+    }
+}

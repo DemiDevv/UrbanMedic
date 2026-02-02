@@ -181,11 +181,13 @@ final class CoreDataManager {
 
             do {
                 try context.execute(deleteRequest)
-                saveContext()
             } catch {
                 print("Error clearing \(entityName): \(error)")
             }
         }
+
+        // Reset context to sync with persistent store after batch delete
+        context.reset()
     }
 
     // MARK: - Helper Methods

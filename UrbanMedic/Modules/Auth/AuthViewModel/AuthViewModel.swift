@@ -123,6 +123,9 @@ final class AuthViewModel: ObservableObject {
 
         isLoading = false
         shouldNavigateToContacts = true
+
+        // Update global auth state
+        AppState.shared.login()
     }
 
     // MARK: - Language Selection

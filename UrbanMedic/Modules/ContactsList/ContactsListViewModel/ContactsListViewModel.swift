@@ -106,8 +106,8 @@ final class ContactsListViewModel: ObservableObject {
         // Удаляем все данные
         CoreDataManager.shared.clearAllData()
 
-        // TODO: Навигация на экран авторизации
-        print("User logged out")
+        // Navigate to auth screen
+        AppState.shared.logout()
     }
 
     // MARK: - Add Contact

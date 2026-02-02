@@ -14,7 +14,7 @@ final class LocationService: NSObject {
     static let shared = LocationService()
 
     private let locationManager = CLLocationManager()
-    private var locationSubject = PassthroughSubject<CLLocation, Error>()
+    private var locationSubject: PassthroughSubject<CLLocation, Error>?
 
     private override init() {
         super.init()
@@ -25,6 +25,10 @@ final class LocationService: NSObject {
     // MARK: - Public Methods
 
     func requestLocation() -> AnyPublisher<CLLocation, Error> {
+        // Create a new subject for each request to avoid reusing completed subjects
+        let subject = PassthroughSubject<CLLocation, Error>()
+        locationSubject = subject
+
         let authorizationStatus: CLAuthorizationStatus
 
         if #available(iOS 14.0, *) {
@@ -39,12 +43,12 @@ final class LocationService: NSObject {
         case .authorizedWhenInUse, .authorizedAlways:
             locationManager.requestLocation()
         case .restricted, .denied:
-            locationSubject.send(completion: .failure(LocationError.permissionDenied))
+            subject.send(completion: .failure(LocationError.permissionDenied))
         @unknown default:
-            locationSubject.send(completion: .failure(LocationError.unknown))
+            subject.send(completion: .failure(LocationError.unknown))
         }
 
-        return locationSubject.eraseToAnyPublisher()
+        return subject.eraseToAnyPublisher()
     }
 
     func getCityName(for location: CLLocation) -> AnyPublisher<String, NetworkError> {
@@ -65,12 +69,12 @@ extension LocationService: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        locationSubject.send(location)
-        locationSubject.send(completion: .finished)
+        locationSubject?.send(location)
+        locationSubject?.send(completion: .finished)
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        locationSubject.send(completion: .failure(error))
+        locationSubject?.send(completion: .failure(error))
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {

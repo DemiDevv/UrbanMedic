@@ -8,22 +8,17 @@
 import SwiftUI
 
 struct RootView: View {
-    @State private var isAuthenticated: Bool = false
+
+    @EnvironmentObject private var appState: AppState
 
     var body: some View {
         Group {
-            if isAuthenticated {
+            if appState.isAuthenticated {
                 ContactsListView()
             } else {
                 AuthView()
             }
         }
-        .onAppear {
-            checkAuthentication()
-        }
-    }
-
-    private func checkAuthentication() {
-        isAuthenticated = CoreDataManager.shared.getCurrentSession() != nil
+        .animation(.easeInOut(duration: 0.3), value: appState.isAuthenticated)
     }
 }

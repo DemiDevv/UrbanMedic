@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct UrbanMedicApp: App {
+
+    @StateObject private var appState = AppState.shared
+
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environmentObject(appState)
         }
     }
 }
