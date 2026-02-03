@@ -10,6 +10,7 @@ import SwiftUI
 struct ContactsListView: View {
 
     @StateObject private var viewModel = ContactsListViewModel()
+    @ObservedObject private var appState = AppState.shared
 
     var body: some View {
         VStack(spacing: 0) {
@@ -36,29 +37,34 @@ struct ContactsListView: View {
                     }
             }
         }
-        .alert("Вы уверены, что хотите выйти?", isPresented: $viewModel.showLogoutAlert) {
-            Button("Отмена", role: .cancel) { }
-            Button("Выйти", role: .destructive) {
+        .alert(LocalizedStrings.areYouSure, isPresented: $viewModel.showLogoutAlert) {
+            Button(LocalizedStrings.cancel, role: .cancel) { }
+            Button(LocalizedStrings.exit, role: .destructive) {
                 viewModel.confirmLogout()
             }
         } message: {
-            Text("При выходе информация о сохраненных контактах будет удалена")
+            Text(LocalizedStrings.informationWillBeDeleted)
         }
     }
 
     // MARK: - Header
 
+    private var displayCityName: String {
+        let city = viewModel.cityName
+        if city.isEmpty || city == "Неизвестно" {
+            return LocalizedStrings.unknown
+        }
+        return city
+    }
+
     private var headerView: some View {
         ZStack {
-            Text(viewModel.cityName)
+            Text(displayCityName)
                 .font(.system(size: Layout.cityFontSize, weight: .medium))
 
             HStack {
-                LanguageSegmentedControl(
-                    selectedLanguage: $viewModel.selectedLanguage,
-                    style: .short
-                )
-                .frame(width: Layout.languageSwitchWidth, height: Layout.languageSwitchHeight)
+                LanguageSegmentedControl(style: .short)
+                    .frame(width: Layout.languageSwitchWidth, height: Layout.languageSwitchHeight)
 
                 Spacer()
 
@@ -128,7 +134,7 @@ struct ContactsListView: View {
                 .frame(width: Layout.separatorHeight)
                 .background(Color.white)
 
-            Text(Constants.Contacts.lastNameColumn)
+            Text(LocalizedStrings.lastName)
                 .padding(.leading, Layout.tableHeaderPadding)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -136,7 +142,7 @@ struct ContactsListView: View {
                 .frame(width: Layout.separatorHeight)
                 .background(Color.white)
 
-            Text(Constants.Contacts.emailColumn)
+            Text(LocalizedStrings.email)
                 .padding(.leading, Layout.tableHeaderPadding)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -151,7 +157,7 @@ struct ContactsListView: View {
 
     private var addContactButton: some View {
         PrimaryButton(
-            title: Constants.Contacts.addContactButton,
+            title: LocalizedStrings.addContact,
             isEnabled: true
         ) {
             viewModel.addContactTapped()

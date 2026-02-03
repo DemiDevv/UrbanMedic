@@ -15,21 +15,22 @@ struct AddEditContactView: View {
 
         var title: String {
             switch self {
-            case .add: return Constants.ContactEdit.newContactTitle
-            case .edit: return Constants.ContactEdit.editContactTitle
+            case .add: return LocalizedStrings.newContact
+            case .edit: return LocalizedStrings.edit
             }
         }
 
         var buttonTitle: String {
             switch self {
-            case .add: return Constants.ContactEdit.addButton
-            case .edit: return Constants.ContactEdit.saveButton
+            case .add: return LocalizedStrings.addContact
+            case .edit: return LocalizedStrings.save
             }
         }
     }
 
     @StateObject private var viewModel: AddEditContactViewModel
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var appState = AppState.shared
     @State private var showCloseAlert = false
 
     init(mode: Mode) {
@@ -52,13 +53,13 @@ struct AddEditContactView: View {
             actionButton
         }
         .background(Color.white)
-        .alert(Constants.ContactEdit.closeAlertTitle, isPresented: $showCloseAlert) {
-            Button(Constants.ContactEdit.closeAlertCancel, role: .cancel) { }
-            Button(Constants.ContactEdit.closeAlertConfirm, role: .destructive) {
+        .alert(LocalizedStrings.areYouSure, isPresented: $showCloseAlert) {
+            Button(LocalizedStrings.cancel, role: .cancel) { }
+            Button(LocalizedStrings.exit, role: .destructive) {
                 dismiss()
             }
         } message: {
-            Text(Constants.ContactEdit.closeAlertMessage)
+            Text(LocalizedStrings.informationWillNotBeSaved)
         }
     }
 
@@ -93,7 +94,7 @@ struct AddEditContactView: View {
         VStack(alignment: .leading, spacing: Layout.inputsSpacing) {
             // Last Name
             VStack(alignment: .leading, spacing: 0) {
-                TextField(Constants.ContactEdit.lastNamePlaceholder, text: $viewModel.lastName)
+                TextField("\(LocalizedStrings.lastName)*", text: $viewModel.lastName)
                     .font(.system(size: Layout.inputFontSize))
                     .foregroundColor(.black)
                     .autocapitalization(.words)
@@ -109,7 +110,7 @@ struct AddEditContactView: View {
 
             // Email
             VStack(alignment: .leading, spacing: 0) {
-                TextField(Constants.ContactEdit.emailPlaceholder, text: $viewModel.email)
+                TextField("\(LocalizedStrings.email)*", text: $viewModel.email)
                     .font(.system(size: Layout.inputFontSize))
                     .foregroundColor(.black)
                     .keyboardType(.emailAddress)

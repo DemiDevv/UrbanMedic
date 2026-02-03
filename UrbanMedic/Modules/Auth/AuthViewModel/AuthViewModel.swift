@@ -18,15 +18,9 @@ struct TimeoutError: Error, LocalizedError {
 final class AuthViewModel: ObservableObject {
 
     @Published var seed: String = ""
-    @Published var selectedLanguage: Language = .ru
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var shouldNavigateToContacts: Bool = false
-
-    enum Language {
-        case ru
-        case en
-    }
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -160,10 +154,4 @@ final class AuthViewModel: ObservableObject {
         AppState.shared.login()
     }
 
-    // MARK: - Language Selection
-
-    func selectLanguage(_ language: Language) {
-        selectedLanguage = language
-        // TODO: Применить локализацию
-    }
 }

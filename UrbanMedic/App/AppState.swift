@@ -13,6 +13,7 @@ final class AppState: ObservableObject {
     static let shared = AppState()
 
     @Published var isAuthenticated: Bool = false
+    @Published var selectedLanguage: Language = .ru
 
     private init() {
         checkAuthentication()

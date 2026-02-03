@@ -11,7 +11,6 @@ import Combine
 @MainActor
 final class ContactsListViewModel: ObservableObject {
 
-    @Published var selectedLanguage: AuthViewModel.Language = .ru
     @Published var cityName: String = "Неизвестно"
     @Published var contacts: [ContactModel] = []
     @Published var isLoading: Bool = false

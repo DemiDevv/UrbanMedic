@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LanguageSegmentedControl: View {
 
-    @Binding var selectedLanguage: AuthViewModel.Language
+    @ObservedObject private var appState = AppState.shared
     var style: Style = .full
 
     enum Style {
@@ -26,7 +26,7 @@ struct LanguageSegmentedControl: View {
         .cornerRadius(10)
     }
 
-    private func titleFor(_ language: AuthViewModel.Language) -> String {
+    private func titleFor(_ language: Language) -> String {
         switch style {
         case .full:
             return language == .ru ? Constants.Language.russian : Constants.Language.english
@@ -35,18 +35,18 @@ struct LanguageSegmentedControl: View {
         }
     }
 
-    private func languageButton(title: String, language: AuthViewModel.Language) -> some View {
+    private func languageButton(title: String, language: Language) -> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
-                selectedLanguage = language
+                appState.selectedLanguage = language
             }
         } label: {
             Text(title)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(selectedLanguage == language ? .black : Color(UIColor.systemGray))
-                .frame(maxWidth: .infinity, maxHeight: .infinity) // Убрали фиксированную высоту
+                .foregroundColor(appState.selectedLanguage == language ? .black : Color(UIColor.systemGray))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(
-                    selectedLanguage == language
+                    appState.selectedLanguage == language
                     ? Color.white
                     : Color.clear
                 )
@@ -57,19 +57,13 @@ struct LanguageSegmentedControl: View {
 }
 
 #Preview("Full Style") {
-    PreviewWrapper(style: .full)
+    LanguageSegmentedControl(style: .full)
+        .frame(height: 40)
+        .padding()
 }
 
 #Preview("Short Style") {
-    PreviewWrapper(style: .short)
-}
-
-private struct PreviewWrapper: View {
-    @State private var selectedLanguage: AuthViewModel.Language = .ru
-    let style: LanguageSegmentedControl.Style
-
-    var body: some View {
-        LanguageSegmentedControl(selectedLanguage: $selectedLanguage, style: style)
-            .padding()
-    }
+    LanguageSegmentedControl(style: .short)
+        .frame(width: 69, height: 26)
+        .padding()
 }

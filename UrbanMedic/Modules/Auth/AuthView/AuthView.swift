@@ -10,6 +10,7 @@ import SwiftUI
 struct AuthView: View {
 
     @StateObject private var viewModel = AuthViewModel()
+    @ObservedObject private var appState = AppState.shared
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,18 +31,18 @@ struct AuthView: View {
             Spacer().frame(height: Layout.illustrationBottomSpacing)
 
             // Title
-            Text(Constants.Auth.seedTitle)
+            Text(LocalizedStrings.seed)
                 .font(.system(size: Layout.titleFontSize, weight: .regular))
 
             Spacer().frame(height: Layout.titleBottomSpacing)
 
             // Input
             VStack(alignment: .leading, spacing: 0) {
-                Text(Constants.Auth.seedLabel)
+                Text("Seed")
                     .font(.system(size: Layout.labelFontSize))
                     .foregroundColor(.labelSecondary)
 
-                TextField(Constants.Auth.seedPlaceholder, text: $viewModel.seed)
+                TextField(LocalizedStrings.seed, text: $viewModel.seed)
                     .font(.system(size: Layout.textFieldFontSize))
                     .foregroundColor(.placeholderText)
                     .padding(.vertical, Layout.textFieldVerticalPadding)
@@ -49,7 +50,7 @@ struct AuthView: View {
                     .autocorrectionDisabled()
                     .disabled(viewModel.isLoading)
                     .placeholder(when: viewModel.seed.isEmpty) {
-                        Text(Constants.Auth.seedPlaceholder)
+                        Text(LocalizedStrings.seed)
                             .foregroundColor(.placeholderText)
                             .font(.system(size: Layout.textFieldFontSize))
                     }
@@ -65,7 +66,7 @@ struct AuthView: View {
             Spacer().frame(height: Layout.inputBottomSpacing)
 
             // Language switch
-            LanguageSegmentedControl(selectedLanguage: $viewModel.selectedLanguage, style: .full)
+            LanguageSegmentedControl(style: .full)
                 .frame(height: 40)
                 .padding(.horizontal, Layout.buttonHorizontalPadding)
                 .disabled(viewModel.isLoading)
@@ -81,7 +82,7 @@ struct AuthView: View {
 
             // Confirm button
             PrimaryButton(
-                title: viewModel.isLoading ? "Загрузка..." : Constants.Auth.confirmButton,
+                title: LocalizedStrings.signIn,
                 isEnabled: viewModel.isConfirmEnabled
             ) {
                 viewModel.confirmTapped()
