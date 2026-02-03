@@ -44,7 +44,7 @@ final class AddEditContactViewModel: ObservableObject {
         lastName != initialLastName || email != initialEmail
     }
 
-    private var isLastNameValid: Bool {
+    var isLastNameValid: Bool {
         let trimmed = lastName.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty, trimmed.count <= 25 else { return false }
 
@@ -52,12 +52,20 @@ final class AddEditContactViewModel: ObservableObject {
         return trimmed.range(of: pattern, options: .regularExpression) != nil
     }
 
-    private var isEmailValid: Bool {
+    var isEmailValid: Bool {
         let trimmed = email.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return false }
 
         let pattern = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
         return trimmed.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    var showLastNameError: Bool {
+        !lastName.isEmpty && !isLastNameValid
+    }
+
+    var showEmailError: Bool {
+        !email.isEmpty && !isEmailValid
     }
 
     // MARK: - Save

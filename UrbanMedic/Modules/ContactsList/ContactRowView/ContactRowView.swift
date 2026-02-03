@@ -27,8 +27,9 @@ struct ContactRowView: View {
             // Last Name
             Text(contact.lastName)
                 .padding(.leading, Layout.textPadding)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(width: Layout.lastNameColumnWidth, alignment: .leading)
                 .font(.system(size: Layout.fontSize))
+                .lineLimit(1)
 
             // Vertical divider
             Divider()
@@ -39,6 +40,8 @@ struct ContactRowView: View {
                     .padding(.leading, Layout.textPadding)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.system(size: Layout.fontSize))
+                    .lineLimit(1)
+                    .truncationMode(.tail)
 
                 // Edit button (if user created)
                 if onEdit != nil {
@@ -63,11 +66,12 @@ struct ContactRowView: View {
 private extension ContactRowView {
     enum Layout {
         static let numberColumnWidth: CGFloat = 51
+        static let lastNameColumnWidth: CGFloat = 130
         static let textPadding: CGFloat = 12
         static let fontSize: CGFloat = 12
         static let editIconSize: CGFloat = 18
         static let editButtonTrailing: CGFloat = 9
-        static let rowHeight: CGFloat = 48
+        static let rowHeight: CGFloat = 36
     }
 }
 

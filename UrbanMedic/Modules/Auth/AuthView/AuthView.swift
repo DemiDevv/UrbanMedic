@@ -90,6 +90,9 @@ struct AuthView: View {
             .padding(.horizontal, Layout.buttonHorizontalPadding)
             .padding(.bottom, Layout.buttonBottomPadding)
         }
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
     }
 }
 

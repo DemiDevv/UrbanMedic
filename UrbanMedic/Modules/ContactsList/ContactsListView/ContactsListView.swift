@@ -136,7 +136,7 @@ struct ContactsListView: View {
 
             Text(LocalizedStrings.lastName)
                 .padding(.leading, Layout.tableHeaderPadding)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(width: Layout.lastNameColumnWidth, alignment: .leading)
 
             Divider()
                 .frame(width: Layout.separatorHeight)
@@ -185,10 +185,11 @@ private extension ContactsListView {
 
         // Table Header
         static let numberColumnWidth: CGFloat = 51
+        static let lastNameColumnWidth: CGFloat = 130
         static let tableHeaderPadding: CGFloat = 12
         static let tableHeaderFontSize: CGFloat = 12
         static let tableHeaderVerticalPadding: CGFloat = 12
-        static let tableHeaderHeight: CGFloat = 48
+        static let tableHeaderHeight: CGFloat = 40
 
         // Button
         static let buttonHorizontalPadding: CGFloat = 16
