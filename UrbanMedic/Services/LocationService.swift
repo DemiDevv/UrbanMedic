@@ -19,7 +19,7 @@ final class LocationService: NSObject {
     private override init() {
         super.init()
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
     }
 
     // MARK: - Public Methods

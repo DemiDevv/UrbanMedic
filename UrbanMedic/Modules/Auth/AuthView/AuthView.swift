@@ -13,86 +13,99 @@ struct AuthView: View {
     @ObservedObject private var appState = AppState.shared
 
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack {
+            VStack(spacing: 0) {
 
-            // Logo
-            Image(Constants.Images.logo)
-                .resizable()
-                .scaledToFit()
-                .frame(height: Layout.logoHeight)
+                // Logo
+                Image(Constants.Images.logo)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: Layout.logoHeight)
 
-            Spacer().frame(height: Layout.logoBottomSpacing)
+                Spacer().frame(height: Layout.logoBottomSpacing)
 
-            // Illustration
-            Image(Constants.Images.doctorIllustration)
-                .resizable()
-                .scaledToFit()
+                // Illustration
+                Image(Constants.Images.doctorIllustration)
+                    .resizable()
+                    .scaledToFit()
 
-            Spacer().frame(height: Layout.illustrationBottomSpacing)
+                Spacer().frame(height: Layout.illustrationBottomSpacing)
 
-            // Title
-            Text(LocalizedStrings.seed)
-                .font(.system(size: Layout.titleFontSize, weight: .regular))
+                // Title
+                Text(LocalizedStrings.seed)
+                    .font(.system(size: Layout.titleFontSize, weight: .regular))
 
-            Spacer().frame(height: Layout.titleBottomSpacing)
+                Spacer().frame(height: Layout.titleBottomSpacing)
 
-            // Input
-            VStack(alignment: .leading, spacing: 0) {
-                Text("Seed")
-                    .font(.system(size: Layout.labelFontSize))
-                    .foregroundColor(.labelSecondary)
+                // Input
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("Seed")
+                        .font(.system(size: Layout.labelFontSize))
+                        .foregroundColor(.labelSecondary)
 
-                TextField(LocalizedStrings.seed, text: $viewModel.seed)
-                    .font(.system(size: Layout.textFieldFontSize))
-                    .foregroundColor(.placeholderText)
-                    .padding(.vertical, Layout.textFieldVerticalPadding)
-                    .autocapitalization(.none)
-                    .autocorrectionDisabled()
+                    TextField(LocalizedStrings.seed, text: $viewModel.seed)
+                        .font(.system(size: Layout.textFieldFontSize))
+                        .foregroundColor(.placeholderText)
+                        .padding(.vertical, Layout.textFieldVerticalPadding)
+                        .autocapitalization(.none)
+                        .autocorrectionDisabled()
+                        .disabled(viewModel.isLoading)
+                        .placeholder(when: viewModel.seed.isEmpty) {
+                            Text(LocalizedStrings.seed)
+                                .foregroundColor(.placeholderText)
+                                .font(.system(size: Layout.textFieldFontSize))
+                        }
+                        .overlay(
+                            Rectangle()
+                                .frame(height: Layout.separatorHeight)
+                                .foregroundColor(.separatorTextField),
+                            alignment: .bottom
+                        )
+                }
+                .padding(.horizontal, Layout.horizontalPadding)
+
+                Spacer().frame(height: Layout.inputBottomSpacing)
+
+                // Language switch
+                LanguageSegmentedControl(style: .full)
+                    .frame(height: 40)
+                    .padding(.horizontal, Layout.buttonHorizontalPadding)
                     .disabled(viewModel.isLoading)
-                    .placeholder(when: viewModel.seed.isEmpty) {
-                        Text(LocalizedStrings.seed)
-                            .foregroundColor(.placeholderText)
-                            .font(.system(size: Layout.textFieldFontSize))
-                    }
-                    .overlay(
-                        Rectangle()
-                            .frame(height: Layout.separatorHeight)
-                            .foregroundColor(.separatorTextField),
-                        alignment: .bottom
-                    )
-            }
-            .padding(.horizontal, Layout.horizontalPadding)
 
-            Spacer().frame(height: Layout.inputBottomSpacing)
+                Spacer().frame(height: Layout.languageSwitchBottomSpacing)
 
-            // Language switch
-            LanguageSegmentedControl(style: .full)
-                .frame(height: 40)
+                // Separator line
+                Rectangle()
+                    .fill(Color.separatorPrimary)
+                    .frame(height: Layout.separatorHeight)
+
+                Spacer().frame(height: Layout.separatorBottomSpacing)
+
+                // Confirm button
+                PrimaryButton(
+                    title: LocalizedStrings.signIn,
+                    isEnabled: viewModel.isConfirmEnabled
+                ) {
+                    viewModel.confirmTapped()
+                }
                 .padding(.horizontal, Layout.buttonHorizontalPadding)
-                .disabled(viewModel.isLoading)
-
-            Spacer().frame(height: Layout.languageSwitchBottomSpacing)
-
-            // Separator line
-            Rectangle()
-                .fill(Color.separatorPrimary)
-                .frame(height: Layout.separatorHeight)
-
-            Spacer().frame(height: Layout.separatorBottomSpacing)
-
-            // Confirm button
-            PrimaryButton(
-                title: LocalizedStrings.signIn,
-                isEnabled: viewModel.isConfirmEnabled
-            ) {
-                viewModel.confirmTapped()
+                .padding(.bottom, Layout.buttonBottomPadding)
             }
-            .padding(.horizontal, Layout.buttonHorizontalPadding)
-            .padding(.bottom, Layout.buttonBottomPadding)
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
+
+            // Loading overlay
+            if viewModel.isLoading {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            }
         }
-        .onTapGesture {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        }
+        .allowsHitTesting(!viewModel.isLoading)
     }
 }
 

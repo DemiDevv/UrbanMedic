@@ -33,8 +33,11 @@ struct AddEditContactView: View {
     @ObservedObject private var appState = AppState.shared
     @State private var showCloseAlert = false
 
-    init(mode: Mode) {
+    private let onSave: (() -> Void)?
+
+    init(mode: Mode, onSave: (() -> Void)? = nil) {
         _viewModel = StateObject(wrappedValue: AddEditContactViewModel(mode: mode))
+        self.onSave = onSave
     }
 
     var body: some View {
@@ -162,6 +165,7 @@ struct AddEditContactView: View {
             isEnabled: viewModel.isValid
         ) {
             viewModel.save()
+            onSave?()
             dismiss()
         }
         .padding(.horizontal, Layout.buttonHorizontalPadding)

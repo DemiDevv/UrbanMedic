@@ -26,15 +26,13 @@ struct ContactsListView: View {
         .background(Color.white)
         .sheet(isPresented: $viewModel.shouldNavigateToAddContact) {
             if let contact = viewModel.contactToEdit {
-                AddEditContactView(mode: .edit(contact))
-                    .onDisappear {
-                        viewModel.refreshContacts()
-                    }
+                AddEditContactView(mode: .edit(contact)) {
+                    viewModel.refreshContacts()
+                }
             } else {
-                AddEditContactView(mode: .add)
-                    .onDisappear {
-                        viewModel.refreshContacts()
-                    }
+                AddEditContactView(mode: .add) {
+                    viewModel.refreshContacts()
+                }
             }
         }
         .alert(LocalizedStrings.areYouSure, isPresented: $viewModel.showLogoutAlert) {
@@ -106,7 +104,6 @@ struct ContactsListView: View {
                                 } : nil
                             )
                             .onAppear {
-                                // Пагинация
                                 viewModel.loadMoreContactsIfNeeded(currentContact: contact)
                             }
 

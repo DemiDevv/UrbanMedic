@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import CoreLocation
 
 @MainActor
 final class ContactsListViewModel: ObservableObject {
@@ -22,6 +23,7 @@ final class ContactsListViewModel: ObservableObject {
     private var currentPage: Int = 1
     private var canLoadMore: Bool = true
     private var loadingTask: Task<Void, Never>?
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialization
 
@@ -30,6 +32,11 @@ final class ContactsListViewModel: ObservableObject {
         loadUserCreatedContacts()
         Task {
             await loadContactsFromAPI()
+        }
+
+        // Если город неизвестен, пробуем получить его повторно
+        if cityName == "Неизвестно" || cityName.isEmpty {
+            fetchCityNameInBackground()
         }
     }
 
@@ -42,6 +49,34 @@ final class ContactsListViewModel: ObservableObject {
 
         currentSeed = session.seed ?? ""
         cityName = session.cityName ?? "Неизвестно"
+    }
+
+    // MARK: - Fetch City Name in Background
+
+    private func fetchCityNameInBackground() {
+        LocationService.shared.requestLocation()
+            .sink { completion in
+                if case .failure(let error) = completion {
+                    print("Location error: \(error.localizedDescription)")
+                }
+            } receiveValue: { [weak self] location in
+                Task { [weak self] in
+                    await self?.updateCityName(for: location)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func updateCityName(for location: CLLocation) async {
+        do {
+            let newCityName = try await LocationService.shared.getCityName(for: location)
+            self.cityName = newCityName
+
+            // Обновляем сессию в CoreData
+            CoreDataManager.shared.updateSessionCityName(newCityName)
+        } catch {
+            print("Failed to fetch city name: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - Load User Created Contacts

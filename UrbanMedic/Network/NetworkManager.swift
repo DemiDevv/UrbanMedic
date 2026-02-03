@@ -9,7 +9,6 @@ import Foundation
 import Alamofire
 import Combine
 
-@MainActor
 final class NetworkManager {
 
     static let shared = NetworkManager()

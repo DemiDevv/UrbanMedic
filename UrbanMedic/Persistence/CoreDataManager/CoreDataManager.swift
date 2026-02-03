@@ -83,6 +83,12 @@ final class CoreDataManager {
         saveContext()
     }
 
+    func updateSessionCityName(_ cityName: String) {
+        guard let session = getCurrentSession() else { return }
+        session.cityName = cityName
+        saveContext()
+    }
+
     // MARK: - Contact Management
 
     func saveContact(_ contact: ContactModel, seed: String) {
