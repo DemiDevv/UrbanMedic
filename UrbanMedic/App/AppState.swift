@@ -16,6 +16,12 @@ final class AppState: ObservableObject {
 
     private init() {
         checkAuthentication()
+        requestPermissions()
+    }
+
+    private func requestPermissions() {
+        NotificationService.shared.requestPermission { _ in }
+        LocationService.shared.requestPermission()
     }
 
     func checkAuthentication() {

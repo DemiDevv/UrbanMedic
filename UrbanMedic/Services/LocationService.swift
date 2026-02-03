@@ -24,6 +24,20 @@ final class LocationService: NSObject {
 
     // MARK: - Public Methods
 
+    func requestPermission() {
+        let authorizationStatus: CLAuthorizationStatus
+
+        if #available(iOS 14.0, *) {
+            authorizationStatus = locationManager.authorizationStatus
+        } else {
+            authorizationStatus = CLLocationManager.authorizationStatus()
+        }
+
+        if authorizationStatus == .notDetermined {
+            locationManager.requestWhenInUseAuthorization()
+        }
+    }
+
     func requestLocation() -> AnyPublisher<CLLocation, Error> {
         // Create a new subject for each request to avoid reusing completed subjects
         let subject = PassthroughSubject<CLLocation, Error>()
