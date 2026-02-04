@@ -35,8 +35,7 @@ struct LocationData: Codable {
     let area: String?
     let region: String?
 
-    // Вспомогательное свойство для получения названия города
     var cityName: String {
-        return city ?? settlement ?? area ?? region ?? "Неизвестно"
+        return city ?? settlement ?? area ?? region ?? LocalizedStrings.unknown
     }
 }

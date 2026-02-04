@@ -15,26 +15,21 @@ struct ContactRowView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            // Number
             Text("\(number)")
                 .padding(.leading, Layout.textPadding)
                 .frame(width: Layout.numberColumnWidth, alignment: .leading)
                 .font(.system(size: Layout.fontSize))
 
-            // Vertical divider
             Divider()
 
-            // Last Name
             Text(contact.lastName)
                 .padding(.leading, Layout.textPadding)
                 .frame(width: Layout.lastNameColumnWidth, alignment: .leading)
                 .font(.system(size: Layout.fontSize))
                 .lineLimit(1)
 
-            // Vertical divider
             Divider()
 
-            // Email
             HStack(spacing: 0) {
                 Text(contact.email)
                     .padding(.leading, Layout.textPadding)
@@ -43,7 +38,6 @@ struct ContactRowView: View {
                     .lineLimit(1)
                     .truncationMode(.tail)
 
-                // Edit button (if user created)
                 if onEdit != nil {
                     Button(action: { onEdit?() }) {
                         Image(Constants.Images.editIcon)

@@ -31,7 +31,7 @@
 		302245442F30987900179422 /* Exceptions for "UrbanMedic" folder in "UrbanMedic" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = 30BDA29F2F2E527B00A3DEE8 /* UrbanMedic */;
 		};
@@ -292,7 +292,7 @@
 				DEVELOPMENT_TEAM = D43J355YJK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = UrbanMedic/Info.plist;
+				INFOPLIST_FILE = UrbanMedic/Resources/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Приложению нужен доступ к вашей геолокации для определения города";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -330,7 +330,7 @@
 				DEVELOPMENT_TEAM = D43J355YJK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = UrbanMedic/Info.plist;
+				INFOPLIST_FILE = UrbanMedic/Resources/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Приложению нужен доступ к вашей геолокации для определения города";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

@@ -81,7 +81,6 @@ final class AddEditContactViewModel: ObservableObject {
 
         switch mode {
         case .add:
-            // Создаем новый контакт
             let newContact = ContactModel(
                 id: UUID(),
                 lastName: lastName.trimmingCharacters(in: .whitespaces),
@@ -91,7 +90,6 @@ final class AddEditContactViewModel: ObservableObject {
             CoreDataManager.shared.saveContact(newContact, seed: seed)
 
         case .edit:
-            // Обновляем существующий контакт
             guard let contact = editingContact else { return }
 
             let updatedContact = ContactModel(

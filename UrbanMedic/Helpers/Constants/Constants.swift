@@ -16,19 +16,8 @@ enum Constants {
         static let en = "en"
     }
 
-    enum Auth {
-        static let signIn = "Войти"
-        static let seedTitle = "Укажите Seed"
-        static let seedPlaceholder = "Введите Seed"
-        static let seedLabel = "Seed"
-        static let confirmButton = "Подтвердить"
-    }
-
     enum Contacts {
-        static let addContactButton = "Добавить контакт"
         static let numberColumn = "№"
-        static let lastNameColumn = "Фамилия"
-        static let emailColumn = "Почта"
     }
 
     enum Images {
@@ -37,18 +26,5 @@ enum Constants {
         static let editIcon = "icon_edit"
         static let logoutIcon = "logout_Icon"
         static let xmarkIcon = "xmark_icon"
-    }
-
-    enum ContactEdit {
-        static let newContactTitle = "Новый контакт"
-        static let editContactTitle = "Редактировать"
-        static let lastNamePlaceholder = "Фамилия*"
-        static let emailPlaceholder = "Email*"
-        static let addButton = "Добавить контакт"
-        static let saveButton = "Сохранить"
-        static let closeAlertTitle = "Вы уверены, что хотите выйти?"
-        static let closeAlertMessage = "При выходе введенная информация не сохранится"
-        static let closeAlertConfirm = "Выйти"
-        static let closeAlertCancel = "Отмена"
     }
 }

@@ -53,7 +53,6 @@ final class CoreDataManager {
     // MARK: - Session Management
 
     func saveSession(seed: String, cityName: String?) {
-        // Удаляем старую сессию если есть
         deleteSession()
 
         let session = UserSessionEntity(context: context)
@@ -92,13 +91,10 @@ final class CoreDataManager {
     // MARK: - Contact Management
 
     func saveContact(_ contact: ContactModel, seed: String) {
-        // Проверяем, существует ли контакт
         if let existingContact = fetchContactEntity(by: contact.id) {
-            // Обновляем существующий
             existingContact.lastName = contact.lastName
             existingContact.email = contact.email
         } else {
-            // Создаем новый
             let entity = ContactEntity(context: context)
             entity.id = contact.id.uuidString
             entity.lastName = contact.lastName
@@ -192,7 +188,6 @@ final class CoreDataManager {
             }
         }
 
-        // Reset context to sync with persistent store after batch delete
         context.reset()
     }
 

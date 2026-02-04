@@ -42,17 +42,14 @@ struct AddEditContactView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header
             headerView
 
             Spacer().frame(height: Layout.headerBottomSpacing)
 
-            // Inputs
             inputsView
 
             Spacer()
 
-            // Save/Add Button
             actionButton
         }
         .background(Color.white)
@@ -95,10 +92,8 @@ struct AddEditContactView: View {
 
     private var inputsView: some View {
         VStack(alignment: .leading, spacing: Layout.inputsSpacing) {
-            // Last Name
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .leading) {
-                    // Visible text layer
                     Text(viewModel.lastName.isEmpty ? "\(LocalizedStrings.lastName)*" : viewModel.lastName)
                         .font(.system(size: Layout.inputFontSize))
                         .foregroundColor(
@@ -107,7 +102,6 @@ struct AddEditContactView: View {
                                 : (viewModel.showLastNameError ? .red : .black)
                         )
 
-                    // Invisible TextField for input
                     TextField("", text: $viewModel.lastName)
                         .font(.system(size: Layout.inputFontSize))
                         .foregroundColor(.clear)
@@ -124,10 +118,8 @@ struct AddEditContactView: View {
                 )
             }
 
-            // Email
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .leading) {
-                    // Visible text layer
                     Text(viewModel.email.isEmpty ? "\(LocalizedStrings.email)*" : viewModel.email)
                         .font(.system(size: Layout.inputFontSize))
                         .foregroundColor(
@@ -136,7 +128,6 @@ struct AddEditContactView: View {
                                 : (viewModel.showEmailError ? .red : .black)
                         )
 
-                    // Invisible TextField for input
                     TextField("", text: $viewModel.email)
                         .font(.system(size: Layout.inputFontSize))
                         .foregroundColor(.clear)
@@ -177,21 +168,21 @@ struct AddEditContactView: View {
 
 private extension AddEditContactView {
     enum Layout {
-        // Header
+        // Заголовок
         static let headerHorizontalPadding: CGFloat = 14
         static let headerTopPadding: CGFloat = 24
         static let headerBottomSpacing: CGFloat = 20
         static let titleFontSize: CGFloat = 20
         static let closeIconSize: CGFloat = 24
 
-        // Inputs
+        // Поля ввода
         static let inputsHorizontalPadding: CGFloat = 17
         static let inputVerticalPadding: CGFloat = 15
         static let inputsSpacing: CGFloat = 16
         static let inputFontSize: CGFloat = 16
         static let separatorHeight: CGFloat = 1
 
-        // Button
+        // Кнопка
         static let buttonHorizontalPadding: CGFloat = 16
         static let buttonBottomPadding: CGFloat = 16
     }

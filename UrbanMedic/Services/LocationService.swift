@@ -39,7 +39,6 @@ final class LocationService: NSObject {
     }
 
     func requestLocation() -> AnyPublisher<CLLocation, Error> {
-        // Create a new subject for each request to avoid reusing completed subjects
         let subject = PassthroughSubject<CLLocation, Error>()
         locationSubject = subject
 
@@ -70,7 +69,7 @@ final class LocationService: NSObject {
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude
         )
-        return response.suggestions.first?.data.cityName ?? "Неизвестно"
+        return response.suggestions.first?.data.cityName ?? LocalizedStrings.unknown
     }
 }
 
@@ -112,9 +111,9 @@ enum LocationError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .permissionDenied:
-            return "Доступ к геолокации запрещен"
+            return LocalizedStrings.locationPermissionDenied
         case .unknown:
-            return "Неизвестная ошибка геолокации"
+            return LocalizedStrings.locationUnknownError
         }
     }
 }

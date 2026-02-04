@@ -12,7 +12,7 @@ import CoreLocation
 @MainActor
 final class ContactsListViewModel: ObservableObject {
 
-    @Published var cityName: String = "Неизвестно"
+    @Published var cityName: String = LocalizedStrings.unknown
     @Published var contacts: [ContactModel] = []
     @Published var isLoading: Bool = false
     @Published var showLogoutAlert: Bool = false
@@ -34,8 +34,7 @@ final class ContactsListViewModel: ObservableObject {
             await loadContactsFromAPI()
         }
 
-        // Если город неизвестен, пробуем получить его повторно
-        if cityName == "Неизвестно" || cityName.isEmpty {
+        if cityName == LocalizedStrings.unknown || cityName.isEmpty {
             fetchCityNameInBackground()
         }
     }
@@ -48,7 +47,7 @@ final class ContactsListViewModel: ObservableObject {
         }
 
         currentSeed = session.seed ?? ""
-        cityName = session.cityName ?? "Неизвестно"
+        cityName = session.cityName ?? LocalizedStrings.unknown
     }
 
     // MARK: - Fetch City Name in Background
@@ -72,7 +71,6 @@ final class ContactsListViewModel: ObservableObject {
             let newCityName = try await LocationService.shared.getCityName(for: location)
             self.cityName = newCityName
 
-            // Обновляем сессию в CoreData
             CoreDataManager.shared.updateSessionCityName(newCityName)
         } catch {
             print("Failed to fetch city name: \(error.localizedDescription)")
@@ -102,7 +100,6 @@ final class ContactsListViewModel: ObservableObject {
 
             let newContacts = response.results.map { $0.toDomainModel() }
 
-            // Добавляем новые контакты после пользовательских
             let userCreatedContacts = contacts.filter { $0.isUserCreated }
             let apiContacts = contacts.filter { !$0.isUserCreated }
 
@@ -119,7 +116,6 @@ final class ContactsListViewModel: ObservableObject {
     // MARK: - Pagination
 
     func loadMoreContactsIfNeeded(currentContact: ContactModel) {
-        // Проверяем, дошли ли до последнего контакта
         guard let lastContact = contacts.last,
               lastContact.id == currentContact.id else {
             return
@@ -137,10 +133,8 @@ final class ContactsListViewModel: ObservableObject {
     }
 
     func confirmLogout() {
-        // Удаляем все данные
         CoreDataManager.shared.clearAllData()
 
-        // Navigate to auth screen
         AppState.shared.logout()
     }
 
@@ -161,10 +155,8 @@ final class ContactsListViewModel: ObservableObject {
     // MARK: - Refresh Contacts
 
     func refreshContacts() {
-        // Обновляем список после добавления/редактирования
         loadUserCreatedContacts()
 
-        // Сбрасываем API контакты и загружаем заново
         let userCreatedContacts = contacts.filter { $0.isUserCreated }
         contacts = userCreatedContacts
 

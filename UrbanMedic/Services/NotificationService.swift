@@ -14,7 +14,6 @@ final class NotificationService: NSObject {
 
     private override init() {
         super.init()
-        // Set delegate to show notifications in foreground
         UNUserNotificationCenter.current().delegate = self
     }
 
@@ -44,7 +43,7 @@ final class NotificationService: NSObject {
         let request = UNNotificationRequest(
             identifier: UUID().uuidString,
             content: content,
-            trigger: nil // Показать сразу
+            trigger: nil
         )
 
         UNUserNotificationCenter.current().add(request) { error in
@@ -59,7 +58,6 @@ final class NotificationService: NSObject {
 
 extension NotificationService: UNUserNotificationCenterDelegate {
 
-    // Show notification even when app is in foreground
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,

@@ -12,7 +12,7 @@ import CoreLocation
 // MARK: - Timeout Error
 
 struct TimeoutError: Error, LocalizedError {
-    var errorDescription: String? { "Превышено время ожидания" }
+    var errorDescription: String? { LocalizedStrings.timeoutError }
 }
 
 final class AuthViewModel: ObservableObject {
@@ -40,7 +40,6 @@ final class AuthViewModel: ObservableObject {
 
     private func checkExistingSession() {
         if let session = CoreDataManager.shared.getCurrentSession() {
-            // Пользователь уже авторизован, переходим к списку контактов
             self.seed = session.seed ?? ""
             self.shouldNavigateToContacts = true
         }
@@ -65,7 +64,6 @@ final class AuthViewModel: ObservableObject {
     private func performAuthFlow() async {
         var cityName: String?
 
-        // 1. Запрашиваем геолокацию с таймаутом
         do {
             cityName = try await withTimeout(seconds: 10) {
                 try await self.fetchCityName()
@@ -75,20 +73,16 @@ final class AuthViewModel: ObservableObject {
             cityName = nil
         }
 
-        // 2. Запрашиваем разрешение на уведомления
         let notificationGranted = await requestNotificationPermission()
 
-        // 3. Вызываем вибрацию
         VibrationService.shared.triggerVibration()
 
-        // 4. Отправляем уведомление (если разрешение дано)
         if notificationGranted {
             NotificationService.shared.sendLocalNotification(
-                title: "Вы успешно авторизовались"
+                title: LocalizedStrings.authSuccessNotification
             )
         }
 
-        // 5. Сохраняем сессию
         saveSession(cityName: cityName)
     }
 
@@ -150,8 +144,6 @@ final class AuthViewModel: ObservableObject {
         isLoading = false
         shouldNavigateToContacts = true
 
-        // Update global auth state
         AppState.shared.login()
     }
-
 }

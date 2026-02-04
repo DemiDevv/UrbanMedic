@@ -47,18 +47,17 @@ struct ContactsListView: View {
 
     // MARK: - Header
 
-    private var displayCityName: String {
+    private var shouldShowCity: Bool {
         let city = viewModel.cityName
-        if city.isEmpty || city == "Неизвестно" {
-            return LocalizedStrings.unknown
-        }
-        return city
+        return !city.isEmpty && city != LocalizedStrings.unknown
     }
 
     private var headerView: some View {
         ZStack {
-            Text(displayCityName)
-                .font(.system(size: Layout.cityFontSize, weight: .medium))
+            if shouldShowCity {
+                Text(viewModel.cityName)
+                    .font(.system(size: Layout.cityFontSize, weight: .medium))
+            }
 
             HStack {
                 LanguageSegmentedControl(style: .short)
@@ -84,12 +83,9 @@ struct ContactsListView: View {
 
     private var tableView: some View {
         VStack(spacing: 0) {
-            // Table Header
             tableHeaderView
 
-            // Table Content
             if viewModel.isLoading && viewModel.contacts.isEmpty {
-                // Loading indicator
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
@@ -110,7 +106,6 @@ struct ContactsListView: View {
                             Divider()
                         }
 
-                        // Loading more indicator
                         if viewModel.isLoading {
                             ProgressView()
                                 .padding()
@@ -169,7 +164,7 @@ struct ContactsListView: View {
 
 private extension ContactsListView {
     enum Layout {
-        // Header
+        // Заголовок
         static let separatorHeight: CGFloat = 1
         static let headerLeadingPadding: CGFloat = 20
         static let headerTrailingPadding: CGFloat = 20
@@ -180,7 +175,7 @@ private extension ContactsListView {
         static let cityFontSize: CGFloat = 17
         static let logoutIconSize: CGFloat = 24
 
-        // Table Header
+        // Заголовок таблицы
         static let numberColumnWidth: CGFloat = 51
         static let lastNameColumnWidth: CGFloat = 130
         static let tableHeaderPadding: CGFloat = 12
@@ -188,7 +183,7 @@ private extension ContactsListView {
         static let tableHeaderVerticalPadding: CGFloat = 12
         static let tableHeaderHeight: CGFloat = 40
 
-        // Button
+        // Кнопка
         static let buttonHorizontalPadding: CGFloat = 16
         static let buttonVerticalPadding: CGFloat = 16
     }

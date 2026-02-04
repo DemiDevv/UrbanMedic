@@ -7,7 +7,6 @@
 
 import Foundation
 import Alamofire
-import Combine
 
 final class NetworkManager {
 
@@ -15,7 +14,7 @@ final class NetworkManager {
 
     private init() {}
 
-    // MARK: - Fetch Users (Async)
+    // MARK: - Fetch Users
 
     func fetchUsers(results: Int = 20, page: Int, seed: String) async throws -> UserResponse {
         let endpoint = APIEndpoint.getUsers(results: results, page: page, seed: seed)
@@ -33,7 +32,7 @@ final class NetworkManager {
         }
     }
 
-    // MARK: - Fetch Location (Async)
+    // MARK: - Fetch Location
 
     func fetchLocation(latitude: Double, longitude: Double) async throws -> LocationResponse {
         let endpoint = APIEndpoint.getLocation(lat: latitude, lon: longitude)
@@ -64,49 +63,6 @@ final class NetworkManager {
         case .failure(let error):
             throw mapError(error)
         }
-    }
-
-    // MARK: - Combine Publishers (Legacy Support)
-
-    func fetchUsersPublisher(results: Int = 20, page: Int, seed: String) -> AnyPublisher<UserResponse, NetworkError> {
-        let endpoint = APIEndpoint.getUsers(results: results, page: page, seed: seed)
-
-        return AF.request(endpoint.url, method: .get)
-            .validate()
-            .publishDecodable(type: UserResponse.self)
-            .value()
-            .mapError { [weak self] error -> NetworkError in
-                self?.mapError(error) ?? .unknown(error)
-            }
-            .eraseToAnyPublisher()
-    }
-
-    func fetchLocationPublisher(latitude: Double, longitude: Double) -> AnyPublisher<LocationResponse, NetworkError> {
-        let endpoint = APIEndpoint.getLocation(lat: latitude, lon: longitude)
-
-        guard let headers = endpoint.headers else {
-            return Fail(error: NetworkError.invalidURL).eraseToAnyPublisher()
-        }
-
-        let parameters: [String: Any] = [
-            "lat": latitude,
-            "lon": longitude
-        ]
-
-        return AF.request(
-            endpoint.url,
-            method: .post,
-            parameters: parameters,
-            encoding: JSONEncoding.default,
-            headers: HTTPHeaders(headers.map { HTTPHeader(name: $0.key, value: $0.value) })
-        )
-        .validate()
-        .publishDecodable(type: LocationResponse.self)
-        .value()
-        .mapError { [weak self] error -> NetworkError in
-            self?.mapError(error) ?? .unknown(error)
-        }
-        .eraseToAnyPublisher()
     }
 
     // MARK: - Error Mapping

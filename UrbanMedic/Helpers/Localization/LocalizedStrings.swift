@@ -21,7 +21,11 @@ enum LocalizedStrings {
     }
 
     static var seed: String {
-        AppState.shared.selectedLanguage == .ru ? "Укажите Сид" : "Enter Seed"
+        AppState.shared.selectedLanguage == .ru ? "Укажите Seed" : "Enter Seed"
+    }
+
+    static var enterSeed: String {
+        AppState.shared.selectedLanguage == .ru ? "Введите Seed" : "Enter Seed"
     }
 
     // MARK: - Contacts
@@ -84,5 +88,39 @@ enum LocalizedStrings {
 
     static var save: String {
         AppState.shared.selectedLanguage == .ru ? "Сохранить" : "Save"
+    }
+
+    // MARK: - Errors
+
+    static var timeoutError: String {
+        AppState.shared.selectedLanguage == .ru
+            ? "Превышено время ожидания"
+            : "Request timeout"
+    }
+
+    static var locationPermissionDenied: String {
+        AppState.shared.selectedLanguage == .ru
+            ? "Доступ к геолокации запрещен"
+            : "Location access denied"
+    }
+
+    static var locationUnknownError: String {
+        AppState.shared.selectedLanguage == .ru
+            ? "Неизвестная ошибка геолокации"
+            : "Unknown location error"
+    }
+
+    // MARK: - Notifications
+
+    static var authSuccessNotification: String {
+        AppState.shared.selectedLanguage == .ru
+            ? "Вы успешно авторизовались"
+            : "You have successfully logged in"
+    }
+
+    // MARK: - Labels
+
+    static var seedLabel: String {
+        AppState.shared.selectedLanguage == .ru ? "Seed" : "Seed"
     }
 }
