@@ -15,6 +15,7 @@ struct TimeoutError: Error, LocalizedError {
     var errorDescription: String? { LocalizedStrings.timeoutError }
 }
 
+@MainActor
 final class AuthViewModel: ObservableObject {
 
     @Published var seed: String = ""
@@ -60,7 +61,6 @@ final class AuthViewModel: ObservableObject {
 
     // MARK: - Auth Flow
 
-    @MainActor
     private func performAuthFlow() async {
         var cityName: String?
 

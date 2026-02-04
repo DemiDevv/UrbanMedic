@@ -20,21 +20,18 @@ struct AuthView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: Layout.logoHeight)
-
-                Spacer().frame(height: Layout.logoBottomSpacing)
+                    .padding(.bottom, Layout.logoBottomSpacing)
 
                 // Иллюстрация
                 Image(Constants.Images.doctorIllustration)
                     .resizable()
                     .scaledToFit()
-
-                Spacer().frame(height: Layout.illustrationBottomSpacing)
+                    .padding(.bottom, Layout.illustrationBottomSpacing)
 
                 // Заголовок
                 Text(LocalizedStrings.seed)
                     .font(.system(size: Layout.titleFontSize, weight: .regular))
-
-                Spacer().frame(height: Layout.titleBottomSpacing)
+                    .padding(.bottom, Layout.titleBottomSpacing)
 
                 // Поле ввода
                 VStack(alignment: .leading, spacing: 0) {
@@ -62,23 +59,20 @@ struct AuthView: View {
                         )
                 }
                 .padding(.horizontal, Layout.horizontalPadding)
-
-                Spacer().frame(height: Layout.inputBottomSpacing)
+                .padding(.bottom, Layout.inputBottomSpacing)
 
                 // Переключатель языка
                 LanguageSegmentedControl(style: .full)
                     .frame(height: 40)
                     .padding(.horizontal, Layout.buttonHorizontalPadding)
+                    .padding(.bottom, Layout.languageSwitchBottomSpacing)
                     .disabled(viewModel.isLoading)
-
-                Spacer().frame(height: Layout.languageSwitchBottomSpacing)
 
                 // Разделитель
                 Rectangle()
                     .fill(Color.separatorPrimary)
                     .frame(height: Layout.separatorHeight)
-
-                Spacer().frame(height: Layout.separatorBottomSpacing)
+                    .padding(.bottom, Layout.separatorBottomSpacing)
 
                 // Кнопка входа
                 PrimaryButton(

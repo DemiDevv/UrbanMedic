@@ -43,8 +43,7 @@ struct AddEditContactView: View {
     var body: some View {
         VStack(spacing: 0) {
             headerView
-
-            Spacer().frame(height: Layout.headerBottomSpacing)
+                .padding(.bottom, Layout.headerBottomSpacing)
 
             inputsView
 
