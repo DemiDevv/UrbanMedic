@@ -91,58 +91,21 @@ struct AddEditContactView: View {
 
     private var inputsView: some View {
         VStack(alignment: .leading, spacing: Layout.inputsSpacing) {
-            VStack(alignment: .leading, spacing: 0) {
-                ZStack(alignment: .leading) {
-                    Text(viewModel.lastName.isEmpty ? "\(LocalizedStrings.lastName)*" : viewModel.lastName)
-                        .font(.system(size: Layout.inputFontSize))
-                        .foregroundColor(
-                            viewModel.lastName.isEmpty
-                                ? .placeholderText
-                                : (viewModel.showLastNameError ? .red : .black)
-                        )
+            ValidationTextField(
+                placeholder: LocalizedStrings.lastName,
+                text: $viewModel.lastName,
+                showError: viewModel.showLastNameError,
+                keyboardType: .default,
+                capitalization: .words
+            )
 
-                    TextField("", text: $viewModel.lastName)
-                        .font(.system(size: Layout.inputFontSize))
-                        .foregroundColor(.clear)
-                        .autocapitalization(.words)
-                        .autocorrectionDisabled()
-                        .tint(viewModel.showLastNameError ? .red : .blue)
-                }
-                .padding(.vertical, Layout.inputVerticalPadding)
-                .overlay(
-                    Rectangle()
-                        .frame(height: Layout.separatorHeight)
-                        .foregroundColor(viewModel.showLastNameError ? .red : .separatorTextField),
-                    alignment: .bottom
-                )
-            }
-
-            VStack(alignment: .leading, spacing: 0) {
-                ZStack(alignment: .leading) {
-                    Text(viewModel.email.isEmpty ? "\(LocalizedStrings.email)*" : viewModel.email)
-                        .font(.system(size: Layout.inputFontSize))
-                        .foregroundColor(
-                            viewModel.email.isEmpty
-                                ? .placeholderText
-                                : (viewModel.showEmailError ? .red : .black)
-                        )
-
-                    TextField("", text: $viewModel.email)
-                        .font(.system(size: Layout.inputFontSize))
-                        .foregroundColor(.clear)
-                        .keyboardType(.emailAddress)
-                        .autocapitalization(.none)
-                        .autocorrectionDisabled()
-                        .tint(viewModel.showEmailError ? .red : .blue)
-                }
-                .padding(.vertical, Layout.inputVerticalPadding)
-                .overlay(
-                    Rectangle()
-                        .frame(height: Layout.separatorHeight)
-                        .foregroundColor(viewModel.showEmailError ? .red : .separatorTextField),
-                    alignment: .bottom
-                )
-            }
+            ValidationTextField(
+                placeholder: LocalizedStrings.email,
+                text: $viewModel.email,
+                showError: viewModel.showEmailError,
+                keyboardType: .emailAddress,
+                capitalization: .never
+            )
         }
         .padding(.horizontal, Layout.inputsHorizontalPadding)
     }
