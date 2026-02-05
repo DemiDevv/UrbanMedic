@@ -10,7 +10,7 @@ import SwiftUI
 struct AuthView: View {
 
     @StateObject private var viewModel = AuthViewModel()
-    @ObservedObject private var appState = AppState.shared
+    @EnvironmentObject private var appState: AppState
 
     var body: some View {
         ZStack {
@@ -139,4 +139,5 @@ private extension AuthView {
 
 #Preview {
     AuthView()
+        .environmentObject(AppState.shared)
 }

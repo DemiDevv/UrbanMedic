@@ -10,7 +10,7 @@ import SwiftUI
 struct ContactsListView: View {
 
     @StateObject private var viewModel = ContactsListViewModel()
-    @ObservedObject private var appState = AppState.shared
+    @EnvironmentObject private var appState: AppState
 
     var body: some View {
         VStack(spacing: 0) {
@@ -191,4 +191,5 @@ private extension ContactsListView {
 
 #Preview {
     ContactsListView()
+        .environmentObject(AppState.shared)
 }

@@ -22,8 +22,6 @@ final class ContactsListViewModel: ObservableObject {
     private var currentSeed: String = ""
     private var currentPage: Int = 1
     private var canLoadMore: Bool = true
-    private var loadingTask: Task<Void, Never>?
-    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialization
 
@@ -35,7 +33,9 @@ final class ContactsListViewModel: ObservableObject {
         }
 
         if cityName == LocalizedStrings.unknown || cityName.isEmpty {
-            fetchCityNameInBackground()
+            Task {
+                await fetchCityNameInBackground()
+            }
         }
     }
 
@@ -52,18 +52,13 @@ final class ContactsListViewModel: ObservableObject {
 
     // MARK: - Fetch City Name in Background
 
-    private func fetchCityNameInBackground() {
-        LocationService.shared.requestLocation()
-            .sink { completion in
-                if case .failure(let error) = completion {
-                    print("Location error: \(error.localizedDescription)")
-                }
-            } receiveValue: { [weak self] location in
-                Task { [weak self] in
-                    await self?.updateCityName(for: location)
-                }
-            }
-            .store(in: &cancellables)
+    private func fetchCityNameInBackground() async {
+        do {
+            let location = try await LocationService.shared.requestLocation()
+            await updateCityName(for: location)
+        } catch {
+            print("Location error: \(error.localizedDescription)")
+        }
     }
 
     private func updateCityName(for location: CLLocation) async {

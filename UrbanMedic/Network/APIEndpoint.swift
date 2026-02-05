@@ -34,6 +34,8 @@ enum APIEndpoint {
         case .getUsers:
             return nil
         case .getLocation:
+            // NOTE: API token is intentionally hardcoded for test assignment review convenience.
+            // In production, this should be stored in .xcconfig, Keychain, or environment variables.
             return [
                 "Authorization": "Token 0fc7d60da65943f6aa3ba2f4a289b50bc024d18f",
                 "Content-Type": "application/json"

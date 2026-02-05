@@ -23,8 +23,6 @@ final class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var shouldNavigateToContacts: Bool = false
 
-    private var cancellables = Set<AnyCancellable>()
-
     // MARK: - Initialization
 
     init() {
@@ -89,18 +87,7 @@ final class AuthViewModel: ObservableObject {
     // MARK: - Fetch City Name
 
     private func fetchCityName() async throws -> String {
-        let location = try await withCheckedThrowingContinuation { continuation in
-            LocationService.shared.requestLocation()
-                .sink { completion in
-                    if case .failure(let error) = completion {
-                        continuation.resume(throwing: error)
-                    }
-                } receiveValue: { location in
-                    continuation.resume(returning: location)
-                }
-                .store(in: &cancellables)
-        }
-
+        let location = try await LocationService.shared.requestLocation()
         return try await LocationService.shared.getCityName(for: location)
     }
 

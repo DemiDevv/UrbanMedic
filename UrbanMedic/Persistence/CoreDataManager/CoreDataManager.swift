@@ -13,27 +13,41 @@ final class CoreDataManager {
 
     static let shared = CoreDataManager()
 
-    private init() {}
+    private(set) var isStoreLoaded = false
+    private(set) var storeLoadError: Error?
+
+    private init() {
+        loadPersistentStores()
+    }
 
     // MARK: - Core Data Stack
 
-    lazy var persistentContainer: NSPersistentContainer = {
+    private lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "UrbanMedic")
-
-        container.loadPersistentStores { description, error in
-            if let error = error {
-                fatalError("Unable to load persistent stores: \(error)")
-            }
-        }
-
         container.viewContext.automaticallyMergesChangesFromParent = true
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-
         return container
     }()
 
+    private func loadPersistentStores() {
+        persistentContainer.loadPersistentStores { [weak self] description, error in
+            if let error = error {
+                self?.storeLoadError = error
+                print("CoreData Error: Unable to load persistent stores: \(error)")
+            } else {
+                self?.isStoreLoaded = true
+            }
+        }
+    }
+
     var context: NSManagedObjectContext {
         return persistentContainer.viewContext
+    }
+
+    private var backgroundContext: NSManagedObjectContext {
+        let context = persistentContainer.newBackgroundContext()
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return context
     }
 
     // MARK: - Save Context

@@ -30,7 +30,7 @@ struct AddEditContactView: View {
 
     @StateObject private var viewModel: AddEditContactViewModel
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject private var appState = AppState.shared
+    @EnvironmentObject private var appState: AppState
     @State private var showCloseAlert = false
 
     private let onSave: (() -> Void)?
@@ -152,9 +152,11 @@ private extension AddEditContactView {
 
 #Preview("Add Mode") {
     AddEditContactView(mode: .add)
+        .environmentObject(AppState.shared)
 }
 
 #Preview("Edit Mode") {
     let contact = ContactModel(id: UUID(), lastName: "Иванов", email: "ivanov@test.com", isUserCreated: true)
     AddEditContactView(mode: .edit(contact))
+        .environmentObject(AppState.shared)
 }

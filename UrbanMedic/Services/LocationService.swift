@@ -7,14 +7,14 @@
 
 import Foundation
 import CoreLocation
-import Combine
 
 final class LocationService: NSObject {
 
     static let shared = LocationService()
 
     private let locationManager = CLLocationManager()
-    private var locationSubject: PassthroughSubject<CLLocation, Error>?
+    private var locationContinuation: CheckedContinuation<CLLocation, Error>?
+    private var isRequestInProgress = false
 
     private override init() {
         super.init()
@@ -25,43 +25,31 @@ final class LocationService: NSObject {
     // MARK: - Public Methods
 
     func requestPermission() {
-        let authorizationStatus: CLAuthorizationStatus
-
-        if #available(iOS 14.0, *) {
-            authorizationStatus = locationManager.authorizationStatus
-        } else {
-            authorizationStatus = CLLocationManager.authorizationStatus()
-        }
-
-        if authorizationStatus == .notDetermined {
+        if locationManager.authorizationStatus == .notDetermined {
             locationManager.requestWhenInUseAuthorization()
         }
     }
 
-    func requestLocation() -> AnyPublisher<CLLocation, Error> {
-        let subject = PassthroughSubject<CLLocation, Error>()
-        locationSubject = subject
-
-        let authorizationStatus: CLAuthorizationStatus
-
-        if #available(iOS 14.0, *) {
-            authorizationStatus = locationManager.authorizationStatus
-        } else {
-            authorizationStatus = CLLocationManager.authorizationStatus()
+    func requestLocation() async throws -> CLLocation {
+        guard !isRequestInProgress else {
+            throw LocationError.requestInProgress
         }
 
-        switch authorizationStatus {
-        case .notDetermined:
-            locationManager.requestWhenInUseAuthorization()
-        case .authorizedWhenInUse, .authorizedAlways:
-            locationManager.requestLocation()
-        case .restricted, .denied:
-            subject.send(completion: .failure(LocationError.permissionDenied))
-        @unknown default:
-            subject.send(completion: .failure(LocationError.unknown))
-        }
+        return try await withCheckedThrowingContinuation { continuation in
+            isRequestInProgress = true
+            locationContinuation = continuation
 
-        return subject.eraseToAnyPublisher()
+            switch locationManager.authorizationStatus {
+            case .notDetermined:
+                locationManager.requestWhenInUseAuthorization()
+            case .authorizedWhenInUse, .authorizedAlways:
+                locationManager.requestLocation()
+            case .restricted, .denied:
+                resumeContinuation(with: .failure(LocationError.permissionDenied))
+            @unknown default:
+                resumeContinuation(with: .failure(LocationError.unknown))
+            }
+        }
     }
 
     func getCityName(for location: CLLocation) async throws -> String {
@@ -71,6 +59,21 @@ final class LocationService: NSObject {
         )
         return response.suggestions.first?.data.cityName ?? LocalizedStrings.unknown
     }
+
+    // MARK: - Private Methods
+
+    private func resumeContinuation(with result: Result<CLLocation, Error>) {
+        isRequestInProgress = false
+        let continuation = locationContinuation
+        locationContinuation = nil
+
+        switch result {
+        case .success(let location):
+            continuation?.resume(returning: location)
+        case .failure(let error):
+            continuation?.resume(throwing: error)
+        }
+    }
 }
 
 // MARK: - CLLocationManagerDelegate
@@ -79,25 +82,24 @@ extension LocationService: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        locationSubject?.send(location)
-        locationSubject?.send(completion: .finished)
+        resumeContinuation(with: .success(location))
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        locationSubject?.send(completion: .failure(error))
+        resumeContinuation(with: .failure(error))
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        let authorizationStatus: CLAuthorizationStatus
+        let status = manager.authorizationStatus
 
-        if #available(iOS 14.0, *) {
-            authorizationStatus = manager.authorizationStatus
-        } else {
-            authorizationStatus = CLLocationManager.authorizationStatus()
-        }
-
-        if authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways {
-            locationManager.requestLocation()
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
+            if isRequestInProgress {
+                locationManager.requestLocation()
+            }
+        } else if status == .denied || status == .restricted {
+            if isRequestInProgress {
+                resumeContinuation(with: .failure(LocationError.permissionDenied))
+            }
         }
     }
 }
@@ -106,12 +108,15 @@ extension LocationService: CLLocationManagerDelegate {
 
 enum LocationError: Error, LocalizedError {
     case permissionDenied
+    case requestInProgress
     case unknown
 
     var errorDescription: String? {
         switch self {
         case .permissionDenied:
             return LocalizedStrings.locationPermissionDenied
+        case .requestInProgress:
+            return "Location request already in progress"
         case .unknown:
             return LocalizedStrings.locationUnknownError
         }
