@@ -12,7 +12,7 @@ import CoreLocation
 @MainActor
 final class ContactsListViewModel: ObservableObject {
 
-    @Published var cityName: String = LocalizedStrings.unknown
+    @Published var cityName: String = ""
     @Published var contacts: [ContactModel] = []
     @Published var isLoading: Bool = false
     @Published var showLogoutAlert: Bool = false
@@ -32,7 +32,7 @@ final class ContactsListViewModel: ObservableObject {
             await loadContactsFromAPI()
         }
 
-        if cityName == LocalizedStrings.unknown || cityName.isEmpty {
+        if cityName.isEmpty {
             Task {
                 await fetchCityNameInBackground()
             }
@@ -47,7 +47,7 @@ final class ContactsListViewModel: ObservableObject {
         }
 
         currentSeed = session.seed ?? ""
-        cityName = session.cityName ?? LocalizedStrings.unknown
+        cityName = session.cityName ?? ""
     }
 
     // MARK: - Fetch City Name in Background

@@ -48,8 +48,7 @@ struct ContactsListView: View {
     // MARK: - Header
 
     private var shouldShowCity: Bool {
-        let city = viewModel.cityName
-        return !city.isEmpty && city != LocalizedStrings.unknown
+        !viewModel.cityName.isEmpty
     }
 
     private var headerView: some View {
@@ -60,7 +59,7 @@ struct ContactsListView: View {
             }
 
             HStack {
-                LanguageSegmentedControl(style: .short)
+                LanguageSegmentedControl(selectedLanguage: $appState.selectedLanguage, style: .short)
                     .frame(width: Layout.languageSwitchWidth, height: Layout.languageSwitchHeight)
 
                 Spacer()

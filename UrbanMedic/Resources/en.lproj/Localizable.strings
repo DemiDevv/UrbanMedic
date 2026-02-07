@@ -1,0 +1,36 @@
+/*
+  Localizable.strings (English)
+  UrbanMedic
+*/
+
+// MARK: - Auth
+"sign_in" = "Sign in";
+"seed" = "Enter Seed";
+"enter_seed" = "Enter Seed";
+"seed_label" = "Seed";
+
+// MARK: - Contacts
+"last_name" = "Last name";
+"email" = "Email";
+"add_contact" = "Add contact";
+"new_contact" = "New contact";
+"edit" = "Edit";
+"save" = "Save";
+
+// MARK: - Alerts
+"are_you_sure" = "Are you sure you want to sign out?";
+"information_will_be_deleted" = "When you exit, the information about your saved contacts will be deleted";
+"information_will_not_be_saved" = "When you exit, the information you entered will not be saved";
+"cancel" = "Cancel";
+"exit" = "Exit";
+
+// MARK: - Errors
+"timeout_error" = "Request timeout";
+"location_permission_denied" = "Location access denied";
+"location_unknown_error" = "Unknown location error";
+
+// MARK: - Notifications
+"auth_success_notification" = "You have successfully logged in";
+
+// MARK: - Other
+"unknown" = "Unknown";

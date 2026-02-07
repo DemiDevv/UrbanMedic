@@ -16,111 +16,39 @@ enum LocalizedStrings {
 
     // MARK: - Auth
 
-    static var signIn: String {
-        AppState.shared.selectedLanguage == .ru ? "Войти" : "Sign in"
-    }
-
-    static var seed: String {
-        AppState.shared.selectedLanguage == .ru ? "Укажите Seed" : "Enter Seed"
-    }
-
-    static var enterSeed: String {
-        AppState.shared.selectedLanguage == .ru ? "Введите Seed" : "Enter Seed"
-    }
+    static var signIn: String { "sign_in".localized }
+    static var seed: String { "seed".localized }
+    static var enterSeed: String { "enter_seed".localized }
+    static var seedLabel: String { "seed_label".localized }
 
     // MARK: - Contacts
 
-    static var lastName: String {
-        AppState.shared.selectedLanguage == .ru ? "Фамилия" : "Last name"
-    }
-
-    static var email: String {
-        AppState.shared.selectedLanguage == .ru ? "Email" : "Email"
-    }
-
-    static var addContact: String {
-        AppState.shared.selectedLanguage == .ru ? "Добавить контакт" : "Add contact"
-    }
+    static var lastName: String { "last_name".localized }
+    static var email: String { "email".localized }
+    static var addContact: String { "add_contact".localized }
+    static var newContact: String { "new_contact".localized }
+    static var edit: String { "edit".localized }
+    static var save: String { "save".localized }
 
     // MARK: - Alerts
 
-    static var areYouSure: String {
-        AppState.shared.selectedLanguage == .ru
-            ? "Вы уверены, что хотите выйти?"
-            : "Are you sure you want to sign out?"
-    }
-
-    static var informationWillBeDeleted: String {
-        AppState.shared.selectedLanguage == .ru
-            ? "При выходе информация о сохраненных контактах будет удалена"
-            : "When you exit, the information about your saved contacts will be deleted"
-    }
-
-    static var informationWillNotBeSaved: String {
-        AppState.shared.selectedLanguage == .ru
-            ? "При выходе введенная информация не сохранится"
-            : "When you exit, the information you entered will not be saved"
-    }
-
-    static var cancel: String {
-        AppState.shared.selectedLanguage == .ru ? "Отмена" : "Cancel"
-    }
-
-    static var exit: String {
-        AppState.shared.selectedLanguage == .ru ? "Выйти" : "Exit"
-    }
-
-    // MARK: - Other
-
-    static var unknown: String {
-        AppState.shared.selectedLanguage == .ru ? "Неизвестно" : "Unknown"
-    }
-
-    // MARK: - Contact Edit
-
-    static var newContact: String {
-        AppState.shared.selectedLanguage == .ru ? "Новый контакт" : "New contact"
-    }
-
-    static var edit: String {
-        AppState.shared.selectedLanguage == .ru ? "Редактировать" : "Edit"
-    }
-
-    static var save: String {
-        AppState.shared.selectedLanguage == .ru ? "Сохранить" : "Save"
-    }
+    static var areYouSure: String { "are_you_sure".localized }
+    static var informationWillBeDeleted: String { "information_will_be_deleted".localized }
+    static var informationWillNotBeSaved: String { "information_will_not_be_saved".localized }
+    static var cancel: String { "cancel".localized }
+    static var exit: String { "exit".localized }
 
     // MARK: - Errors
 
-    static var timeoutError: String {
-        AppState.shared.selectedLanguage == .ru
-            ? "Превышено время ожидания"
-            : "Request timeout"
-    }
-
-    static var locationPermissionDenied: String {
-        AppState.shared.selectedLanguage == .ru
-            ? "Доступ к геолокации запрещен"
-            : "Location access denied"
-    }
-
-    static var locationUnknownError: String {
-        AppState.shared.selectedLanguage == .ru
-            ? "Неизвестная ошибка геолокации"
-            : "Unknown location error"
-    }
+    static var timeoutError: String { "timeout_error".localized }
+    static var locationPermissionDenied: String { "location_permission_denied".localized }
+    static var locationUnknownError: String { "location_unknown_error".localized }
 
     // MARK: - Notifications
 
-    static var authSuccessNotification: String {
-        AppState.shared.selectedLanguage == .ru
-            ? "Вы успешно авторизовались"
-            : "You have successfully logged in"
-    }
+    static var authSuccessNotification: String { "auth_success_notification".localized }
 
-    // MARK: - Labels
+    // MARK: - Other
 
-    static var seedLabel: String {
-        AppState.shared.selectedLanguage == .ru ? "Seed" : "Seed"
-    }
+    static var unknown: String { "unknown".localized }
 }

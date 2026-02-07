@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LanguageSegmentedControl: View {
 
-    @ObservedObject private var appState = AppState.shared
+    @Binding var selectedLanguage: Language
     var style: Style = .full
 
     enum Style {
@@ -38,15 +38,15 @@ struct LanguageSegmentedControl: View {
     private func languageButton(title: String, language: Language) -> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
-                appState.selectedLanguage = language
+                selectedLanguage = language
             }
         } label: {
             Text(title)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(appState.selectedLanguage == language ? .black : Color(UIColor.systemGray))
+                .foregroundColor(selectedLanguage == language ? .black : Color(UIColor.systemGray))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(
-                    appState.selectedLanguage == language
+                    selectedLanguage == language
                     ? Color.white
                     : Color.clear
                 )
@@ -57,13 +57,19 @@ struct LanguageSegmentedControl: View {
 }
 
 #Preview("Full Style") {
-    LanguageSegmentedControl(style: .full)
-        .frame(height: 40)
-        .padding()
+    LanguageSegmentedControl(
+        selectedLanguage: .constant(.ru),
+        style: .full
+    )
+    .frame(height: 40)
+    .padding()
 }
 
 #Preview("Short Style") {
-    LanguageSegmentedControl(style: .short)
-        .frame(width: 69, height: 26)
-        .padding()
+    LanguageSegmentedControl(
+        selectedLanguage: .constant(.en),
+        style: .short
+    )
+    .frame(width: 69, height: 26)
+    .padding()
 }

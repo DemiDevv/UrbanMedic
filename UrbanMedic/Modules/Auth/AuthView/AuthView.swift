@@ -62,7 +62,7 @@ struct AuthView: View {
                 .padding(.bottom, Layout.inputBottomSpacing)
 
                 // Переключатель языка
-                LanguageSegmentedControl(style: .full)
+                LanguageSegmentedControl(selectedLanguage: $appState.selectedLanguage, style: .full)
                     .frame(height: 40)
                     .padding(.horizontal, Layout.buttonHorizontalPadding)
                     .padding(.bottom, Layout.languageSwitchBottomSpacing)
