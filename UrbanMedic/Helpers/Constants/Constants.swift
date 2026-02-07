@@ -9,13 +9,6 @@ import Foundation
 
 enum Constants {
 
-    enum Language {
-        static let russian = "Русский"
-        static let english = "English"
-        static let ru = "ru"
-        static let en = "en"
-    }
-
     enum Contacts {
         static let numberColumn = "№"
     }

@@ -29,9 +29,9 @@ struct LanguageSegmentedControl: View {
     private func titleFor(_ language: Language) -> String {
         switch style {
         case .full:
-            return language == .ru ? Constants.Language.russian : Constants.Language.english
+            return language.fullTitle
         case .short:
-            return language == .ru ? Constants.Language.ru : Constants.Language.en
+            return language.rawValue
         }
     }
 

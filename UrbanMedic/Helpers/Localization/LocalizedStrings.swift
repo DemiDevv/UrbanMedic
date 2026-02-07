@@ -10,6 +10,13 @@ import Foundation
 enum Language: String {
     case ru
     case en
+
+    var fullTitle: String {
+        switch self {
+        case .ru: return "Русский"
+        case .en: return "English"
+        }
+    }
 }
 
 enum LocalizedStrings {
