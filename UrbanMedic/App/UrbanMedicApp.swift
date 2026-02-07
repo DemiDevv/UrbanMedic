@@ -10,12 +10,13 @@ import SwiftUI
 @main
 struct UrbanMedicApp: App {
 
-    @StateObject private var appState = AppState.shared
+    @StateObject private var container = DependencyContainer()
 
     var body: some Scene {
         WindowGroup {
             RootView()
-                .environmentObject(appState)
+                .environmentObject(container)
+                .environmentObject(container.appState)
         }
     }
 }

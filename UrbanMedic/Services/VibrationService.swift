@@ -7,11 +7,9 @@
 
 import UIKit
 
-final class VibrationService {
+final class VibrationService: VibrationProviding {
 
-    static let shared = VibrationService()
-
-    private init() {}
+    init() {}
 
     func triggerVibration() {
         let generator = UINotificationFeedbackGenerator()

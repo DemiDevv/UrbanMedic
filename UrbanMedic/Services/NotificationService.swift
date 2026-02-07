@@ -8,11 +8,9 @@
 import Foundation
 import UserNotifications
 
-final class NotificationService: NSObject {
+final class NotificationService: NSObject, NotificationProviding {
 
-    static let shared = NotificationService()
-
-    private override init() {
+    override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
     }

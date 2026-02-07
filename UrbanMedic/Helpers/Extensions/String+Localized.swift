@@ -15,9 +15,11 @@ extension String {
 }
 
 extension Bundle {
+    private static let languageKey = "selectedLanguage"
+
     static var forCurrentLanguage: Bundle? {
-        let language = AppState.shared.selectedLanguage.rawValue
-        guard let path = Bundle.main.path(forResource: language, ofType: "lproj"),
+        let languageCode = UserDefaults.standard.string(forKey: languageKey) ?? Language.ru.rawValue
+        guard let path = Bundle.main.path(forResource: languageCode, ofType: "lproj"),
               let bundle = Bundle(path: path) else {
             return nil
         }

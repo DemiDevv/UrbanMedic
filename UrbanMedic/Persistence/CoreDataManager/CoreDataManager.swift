@@ -9,14 +9,12 @@ import Foundation
 import CoreData
 import Combine
 
-final class CoreDataManager {
-
-    static let shared = CoreDataManager()
+final class CoreDataManager: DataManaging {
 
     private(set) var isStoreLoaded = false
     private(set) var storeLoadError: Error?
 
-    private init() {
+    init() {
         loadPersistentStores()
     }
 

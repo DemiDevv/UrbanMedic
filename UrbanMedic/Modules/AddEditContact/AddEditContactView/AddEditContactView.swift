@@ -35,8 +35,8 @@ struct AddEditContactView: View {
 
     private let onSave: (() -> Void)?
 
-    init(mode: Mode, onSave: (() -> Void)? = nil) {
-        _viewModel = StateObject(wrappedValue: AddEditContactViewModel(mode: mode))
+    init(viewModel: AddEditContactViewModel, onSave: (() -> Void)? = nil) {
+        _viewModel = StateObject(wrappedValue: viewModel)
         self.onSave = onSave
     }
 
@@ -150,13 +150,3 @@ private extension AddEditContactView {
     }
 }
 
-#Preview("Add Mode") {
-    AddEditContactView(mode: .add)
-        .environmentObject(AppState.shared)
-}
-
-#Preview("Edit Mode") {
-    let contact = ContactModel(id: UUID(), lastName: "Иванов", email: "ivanov@test.com", isUserCreated: true)
-    AddEditContactView(mode: .edit(contact))
-        .environmentObject(AppState.shared)
-}

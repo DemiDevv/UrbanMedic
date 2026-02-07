@@ -9,8 +9,13 @@ import SwiftUI
 
 struct ContactsListView: View {
 
-    @StateObject private var viewModel = ContactsListViewModel()
+    @StateObject private var viewModel: ContactsListViewModel
+    @EnvironmentObject private var container: DependencyContainer
     @EnvironmentObject private var appState: AppState
+
+    init(viewModel: ContactsListViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,13 +31,15 @@ struct ContactsListView: View {
         .background(Color.white)
         .sheet(isPresented: $viewModel.shouldNavigateToAddContact) {
             if let contact = viewModel.contactToEdit {
-                AddEditContactView(mode: .edit(contact)) {
-                    viewModel.refreshContacts()
-                }
+                AddEditContactView(
+                    viewModel: container.makeAddEditContactViewModel(mode: .edit(contact)),
+                    onSave: { viewModel.refreshContacts() }
+                )
             } else {
-                AddEditContactView(mode: .add) {
-                    viewModel.refreshContacts()
-                }
+                AddEditContactView(
+                    viewModel: container.makeAddEditContactViewModel(mode: .add),
+                    onSave: { viewModel.refreshContacts() }
+                )
             }
         }
         .alert(LocalizedStrings.areYouSure, isPresented: $viewModel.showLogoutAlert) {
@@ -188,7 +195,3 @@ private extension ContactsListView {
     }
 }
 
-#Preview {
-    ContactsListView()
-        .environmentObject(AppState.shared)
-}

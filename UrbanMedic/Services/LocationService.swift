@@ -8,15 +8,15 @@
 import Foundation
 import CoreLocation
 
-final class LocationService: NSObject {
-
-    static let shared = LocationService()
+final class LocationService: NSObject, LocationProviding {
 
     private let locationManager = CLLocationManager()
+    private let networkManager: NetworkManaging
     private var locationContinuation: CheckedContinuation<CLLocation, Error>?
     private var isRequestInProgress = false
 
-    private override init() {
+    init(networkManager: NetworkManaging) {
+        self.networkManager = networkManager
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
@@ -53,7 +53,7 @@ final class LocationService: NSObject {
     }
 
     func getCityName(for location: CLLocation) async throws -> String {
-        let response = try await NetworkManager.shared.fetchLocation(
+        let response = try await networkManager.fetchLocation(
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude
         )

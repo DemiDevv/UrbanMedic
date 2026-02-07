@@ -23,9 +23,26 @@ final class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var shouldNavigateToContacts: Bool = false
 
+    private let dataManager: DataManaging
+    private let locationService: LocationProviding
+    private let notificationService: NotificationProviding
+    private let vibrationService: VibrationProviding
+    private let appState: AppStateProtocol
+
     // MARK: - Initialization
 
-    init() {
+    init(
+        dataManager: DataManaging,
+        locationService: LocationProviding,
+        notificationService: NotificationProviding,
+        vibrationService: VibrationProviding,
+        appState: AppStateProtocol
+    ) {
+        self.dataManager = dataManager
+        self.locationService = locationService
+        self.notificationService = notificationService
+        self.vibrationService = vibrationService
+        self.appState = appState
         checkExistingSession()
     }
 
@@ -38,7 +55,7 @@ final class AuthViewModel: ObservableObject {
     // MARK: - Check Existing Session
 
     private func checkExistingSession() {
-        if let session = CoreDataManager.shared.getCurrentSession() {
+        if let session = dataManager.getCurrentSession() {
             self.seed = session.seed ?? ""
             self.shouldNavigateToContacts = true
         }
@@ -73,11 +90,12 @@ final class AuthViewModel: ObservableObject {
 
         let notificationGranted = await requestNotificationPermission()
 
-        VibrationService.shared.triggerVibration()
+        vibrationService.triggerVibration()
 
         if notificationGranted {
-            NotificationService.shared.sendLocalNotification(
-                title: LocalizedStrings.authSuccessNotification
+            notificationService.sendLocalNotification(
+                title: LocalizedStrings.authSuccessNotification,
+                body: nil
             )
         }
 
@@ -87,15 +105,15 @@ final class AuthViewModel: ObservableObject {
     // MARK: - Fetch City Name
 
     private func fetchCityName() async throws -> String {
-        let location = try await LocationService.shared.requestLocation()
-        return try await LocationService.shared.getCityName(for: location)
+        let location = try await locationService.requestLocation()
+        return try await locationService.getCityName(for: location)
     }
 
     // MARK: - Request Notification Permission
 
     private func requestNotificationPermission() async -> Bool {
         await withCheckedContinuation { continuation in
-            NotificationService.shared.requestPermission { granted in
+            notificationService.requestPermission { granted in
                 continuation.resume(returning: granted)
             }
         }
@@ -123,7 +141,7 @@ final class AuthViewModel: ObservableObject {
     // MARK: - Save Session
 
     private func saveSession(cityName: String?) {
-        CoreDataManager.shared.saveSession(
+        dataManager.saveSession(
             seed: seed.trimmingCharacters(in: .whitespaces),
             cityName: cityName
         )
@@ -131,6 +149,6 @@ final class AuthViewModel: ObservableObject {
         isLoading = false
         shouldNavigateToContacts = true
 
-        AppState.shared.login()
+        appState.login()
     }
 }

@@ -8,9 +8,7 @@
 import Foundation
 import Combine
 
-final class AppState: ObservableObject {
-
-    static let shared = AppState()
+final class AppState: ObservableObject, AppStateProtocol {
 
     private enum Keys {
         static let selectedLanguage = "selectedLanguage"
@@ -23,7 +21,18 @@ final class AppState: ObservableObject {
         }
     }
 
-    private init() {
+    private let dataManager: DataManaging
+    private let notificationService: NotificationProviding
+    private let locationService: LocationProviding
+
+    init(
+        dataManager: DataManaging,
+        notificationService: NotificationProviding,
+        locationService: LocationProviding
+    ) {
+        self.dataManager = dataManager
+        self.notificationService = notificationService
+        self.locationService = locationService
         loadSavedLanguage()
         checkAuthentication()
         requestPermissions()
@@ -37,12 +46,12 @@ final class AppState: ObservableObject {
     }
 
     private func requestPermissions() {
-        NotificationService.shared.requestPermission { _ in }
-        LocationService.shared.requestPermission()
+        notificationService.requestPermission { _ in }
+        locationService.requestPermission()
     }
 
     func checkAuthentication() {
-        isAuthenticated = CoreDataManager.shared.getCurrentSession() != nil
+        isAuthenticated = dataManager.getCurrentSession() != nil
     }
 
     func login() {

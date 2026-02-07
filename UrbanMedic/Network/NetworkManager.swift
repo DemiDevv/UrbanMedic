@@ -8,11 +8,9 @@
 import Foundation
 import Alamofire
 
-final class NetworkManager {
+final class NetworkManager: NetworkManaging {
 
-    static let shared = NetworkManager()
-
-    private init() {}
+    init() {}
 
     // MARK: - Fetch Users
 

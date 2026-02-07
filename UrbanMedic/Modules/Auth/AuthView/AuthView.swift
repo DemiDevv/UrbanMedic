@@ -9,8 +9,12 @@ import SwiftUI
 
 struct AuthView: View {
 
-    @StateObject private var viewModel = AuthViewModel()
+    @StateObject private var viewModel: AuthViewModel
     @EnvironmentObject private var appState: AppState
+
+    init(viewModel: AuthViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
 
     var body: some View {
         ZStack {
@@ -135,9 +139,4 @@ private extension AuthView {
         static let buttonHorizontalPadding: CGFloat = 14
         static let buttonBottomPadding: CGFloat = 16
     }
-}
-
-#Preview {
-    AuthView()
-        .environmentObject(AppState.shared)
 }

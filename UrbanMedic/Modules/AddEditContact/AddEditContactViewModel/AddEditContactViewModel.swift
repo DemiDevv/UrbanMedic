@@ -19,9 +19,11 @@ final class AddEditContactViewModel: ObservableObject {
     private let initialLastName: String
     private let initialEmail: String
     private var editingContact: ContactModel?
+    private let dataManager: DataManaging
 
-    init(mode: AddEditContactView.Mode) {
+    init(mode: AddEditContactView.Mode, dataManager: DataManaging) {
         self.mode = mode
+        self.dataManager = dataManager
 
         if case .edit(let contact) = mode {
             self.lastName = contact.lastName
@@ -73,7 +75,7 @@ final class AddEditContactViewModel: ObservableObject {
 
     func save() {
         guard isValid else { return }
-        guard let session = CoreDataManager.shared.getCurrentSession() else {
+        guard let session = dataManager.getCurrentSession() else {
             print("No active session")
             return
         }
@@ -88,7 +90,7 @@ final class AddEditContactViewModel: ObservableObject {
                 email: email.trimmingCharacters(in: .whitespaces),
                 isUserCreated: true
             )
-            CoreDataManager.shared.saveContact(newContact, seed: seed)
+            dataManager.saveContact(newContact, seed: seed)
 
         case .edit:
             guard let contact = editingContact else { return }
@@ -99,7 +101,7 @@ final class AddEditContactViewModel: ObservableObject {
                 email: email.trimmingCharacters(in: .whitespaces),
                 isUserCreated: contact.isUserCreated
             )
-            CoreDataManager.shared.updateContact(updatedContact, seed: seed)
+            dataManager.updateContact(updatedContact, seed: seed)
         }
     }
 }

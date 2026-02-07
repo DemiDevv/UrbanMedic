@@ -23,9 +23,24 @@ final class ContactsListViewModel: ObservableObject {
     private var currentPage: Int = 1
     private var canLoadMore: Bool = true
 
+    private let dataManager: DataManaging
+    private let networkManager: NetworkManaging
+    private let locationService: LocationProviding
+    private let appState: AppStateProtocol
+
     // MARK: - Initialization
 
-    init() {
+    init(
+        dataManager: DataManaging,
+        networkManager: NetworkManaging,
+        locationService: LocationProviding,
+        appState: AppStateProtocol
+    ) {
+        self.dataManager = dataManager
+        self.networkManager = networkManager
+        self.locationService = locationService
+        self.appState = appState
+
         loadSession()
         loadUserCreatedContacts()
         Task {
@@ -42,7 +57,7 @@ final class ContactsListViewModel: ObservableObject {
     // MARK: - Load Session
 
     private func loadSession() {
-        guard let session = CoreDataManager.shared.getCurrentSession() else {
+        guard let session = dataManager.getCurrentSession() else {
             return
         }
 
@@ -54,7 +69,7 @@ final class ContactsListViewModel: ObservableObject {
 
     private func fetchCityNameInBackground() async {
         do {
-            let location = try await LocationService.shared.requestLocation()
+            let location = try await locationService.requestLocation()
             await updateCityName(for: location)
         } catch {
             print("Location error: \(error.localizedDescription)")
@@ -63,10 +78,10 @@ final class ContactsListViewModel: ObservableObject {
 
     private func updateCityName(for location: CLLocation) async {
         do {
-            let newCityName = try await LocationService.shared.getCityName(for: location)
+            let newCityName = try await locationService.getCityName(for: location)
             self.cityName = newCityName
 
-            CoreDataManager.shared.updateSessionCityName(newCityName)
+            dataManager.updateSessionCityName(newCityName)
         } catch {
             print("Failed to fetch city name: \(error.localizedDescription)")
         }
@@ -75,7 +90,7 @@ final class ContactsListViewModel: ObservableObject {
     // MARK: - Load User Created Contacts
 
     private func loadUserCreatedContacts() {
-        let userContacts = CoreDataManager.shared.getUserCreatedContacts(for: currentSeed)
+        let userContacts = dataManager.getUserCreatedContacts(for: currentSeed)
         contacts = userContacts
     }
 
@@ -87,7 +102,7 @@ final class ContactsListViewModel: ObservableObject {
         isLoading = true
 
         do {
-            let response = try await NetworkManager.shared.fetchUsers(
+            let response = try await networkManager.fetchUsers(
                 results: 20,
                 page: currentPage,
                 seed: currentSeed
@@ -128,9 +143,9 @@ final class ContactsListViewModel: ObservableObject {
     }
 
     func confirmLogout() {
-        CoreDataManager.shared.clearAllData()
+        dataManager.clearAllData()
 
-        AppState.shared.logout()
+        appState.logout()
     }
 
     // MARK: - Add Contact
