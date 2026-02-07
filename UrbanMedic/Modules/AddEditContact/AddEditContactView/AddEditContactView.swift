@@ -130,21 +130,21 @@ struct AddEditContactView: View {
 
 private extension AddEditContactView {
     enum Layout {
-        // Заголовок
+        // Header
         static let headerHorizontalPadding: CGFloat = 14
         static let headerTopPadding: CGFloat = 24
         static let headerBottomSpacing: CGFloat = 20
         static let titleFontSize: CGFloat = 20
         static let closeIconSize: CGFloat = 24
 
-        // Поля ввода
+        // Input fields
         static let inputsHorizontalPadding: CGFloat = 17
         static let inputVerticalPadding: CGFloat = 15
         static let inputsSpacing: CGFloat = 16
         static let inputFontSize: CGFloat = 16
         static let separatorHeight: CGFloat = 1
 
-        // Кнопка
+        // Button
         static let buttonHorizontalPadding: CGFloat = 16
         static let buttonBottomPadding: CGFloat = 16
     }

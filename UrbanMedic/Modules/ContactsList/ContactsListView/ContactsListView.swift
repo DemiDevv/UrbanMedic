@@ -163,7 +163,7 @@ struct ContactsListView: View {
 
 private extension ContactsListView {
     enum Layout {
-        // Заголовок
+        // Header
         static let separatorHeight: CGFloat = 1
         static let headerLeadingPadding: CGFloat = 20
         static let headerTrailingPadding: CGFloat = 20
@@ -174,7 +174,7 @@ private extension ContactsListView {
         static let cityFontSize: CGFloat = 17
         static let logoutIconSize: CGFloat = 24
 
-        // Заголовок таблицы
+        // Table header
         static let numberColumnWidth: CGFloat = 51
         static let lastNameColumnWidth: CGFloat = 130
         static let tableHeaderPadding: CGFloat = 12
@@ -182,7 +182,7 @@ private extension ContactsListView {
         static let tableHeaderVerticalPadding: CGFloat = 12
         static let tableHeaderHeight: CGFloat = 40
 
-        // Кнопка
+        // Button
         static let buttonHorizontalPadding: CGFloat = 16
         static let buttonVerticalPadding: CGFloat = 16
     }

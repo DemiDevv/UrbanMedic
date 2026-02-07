@@ -15,25 +15,25 @@ struct AuthView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                // Логотип
+                // Logo
                 Image(Constants.Images.logo)
                     .resizable()
                     .scaledToFit()
                     .frame(height: Layout.logoHeight)
                     .padding(.bottom, Layout.logoBottomSpacing)
 
-                // Иллюстрация
+                // Illustration
                 Image(Constants.Images.doctorIllustration)
                     .resizable()
                     .scaledToFit()
                     .padding(.bottom, Layout.illustrationBottomSpacing)
 
-                // Заголовок
+                // Title
                 Text(LocalizedStrings.seed)
                     .font(.system(size: Layout.titleFontSize, weight: .regular))
                     .padding(.bottom, Layout.titleBottomSpacing)
 
-                // Поле ввода
+                // Input field
                 VStack(alignment: .leading, spacing: 0) {
                     Text(LocalizedStrings.seedLabel)
                         .font(.system(size: Layout.labelFontSize))
@@ -61,20 +61,20 @@ struct AuthView: View {
                 .padding(.horizontal, Layout.horizontalPadding)
                 .padding(.bottom, Layout.inputBottomSpacing)
 
-                // Переключатель языка
+                // Language switcher
                 LanguageSegmentedControl(selectedLanguage: $appState.selectedLanguage, style: .full)
                     .frame(height: 40)
                     .padding(.horizontal, Layout.buttonHorizontalPadding)
                     .padding(.bottom, Layout.languageSwitchBottomSpacing)
                     .disabled(viewModel.isLoading)
 
-                // Разделитель
+                // Separator
                 Rectangle()
                     .fill(Color.separatorPrimary)
                     .frame(height: Layout.separatorHeight)
                     .padding(.bottom, Layout.separatorBottomSpacing)
 
-                // Кнопка входа
+                // Sign in button
                 PrimaryButton(
                     title: LocalizedStrings.signIn,
                     isEnabled: viewModel.isConfirmEnabled
@@ -88,7 +88,7 @@ struct AuthView: View {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
 
-            // Оверлей загрузки
+            // Loading overlay
             if viewModel.isLoading {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()
@@ -106,32 +106,32 @@ struct AuthView: View {
 
 private extension AuthView {
     enum Layout {
-        // Логотип
+        // Logo
         static let logoHeight: CGFloat = 23
         static let logoBottomSpacing: CGFloat = 32
 
-        // Иллюстрация
+        // Illustration
         static let illustrationBottomSpacing: CGFloat = 82
 
-        // Заголовок
+        // Title
         static let titleFontSize: CGFloat = 28
         static let titleBottomSpacing: CGFloat = 24
 
-        // Поля ввода
+        // Input fields
         static let labelFontSize: CGFloat = 14
         static let textFieldFontSize: CGFloat = 16
         static let textFieldVerticalPadding: CGFloat = 8
         static let horizontalPadding: CGFloat = 28
         static let inputBottomSpacing: CGFloat = 88
 
-        // Переключатель языка
+        // Language switcher
         static let languageSwitchBottomSpacing: CGFloat = 14
 
-        // Разделитель
+        // Separator
         static let separatorHeight: CGFloat = 1
         static let separatorBottomSpacing: CGFloat = 14
 
-        // Кнопка
+        // Button
         static let buttonHorizontalPadding: CGFloat = 14
         static let buttonBottomPadding: CGFloat = 16
     }
